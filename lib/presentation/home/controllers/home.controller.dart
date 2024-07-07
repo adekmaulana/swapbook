@@ -41,16 +41,16 @@ class HomeController extends BaseController with StateMixin<bool> {
 
   void changePage(int index) {
     selectedIndex.value = index;
-    Get.nestedKey(index + 1)?.currentState?.popUntil((route) {
-      currentRoute.value = route.settings.name ?? Routes.HOME;
-      return true;
-    });
+    // Get.nestedKey(index + 1)?.currentState?.popUntil((route) {
+    //   currentRoute.value = route.settings.name ?? Routes.HOME;
+    //   return true;
+    // });
 
-    pageController.animateToPage(
-      index,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOutCirc,
-    );
+    // pageController.animateToPage(
+    //   index,
+    //   duration: const Duration(milliseconds: 300),
+    //   curve: Curves.easeInOutCirc,
+    // );
   }
 
   void onKeyboardState(KeyboardState state) {

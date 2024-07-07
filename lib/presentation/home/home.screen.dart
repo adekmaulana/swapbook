@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -13,8 +11,6 @@ import 'controllers/home.controller.dart';
 class HomeScreen extends GetView<HomeController> {
   const HomeScreen({super.key});
 
-  static const FloatingActionButtonLocation centerDocked =
-      _CenterDockedFabLocation();
   @override
   Widget build(BuildContext context) {
     return KeyboardDetection(
@@ -25,57 +21,80 @@ class HomeScreen extends GetView<HomeController> {
         key: controller.scaffoldKey,
         resizeToAvoidBottomInset: true,
         extendBody: true,
-        floatingActionButton: Obx(
-          () => Visibility(
-            visible: controller.isFabVisible.value,
-            child: FloatingActionButton(
-              heroTag: "<createPost FloatingActionButton tag>",
-              onPressed: () {},
-              backgroundColor: AppColor.primaryColor,
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(110),
-                ),
-              ),
-              elevation: 8,
-              child: const Icon(
-                Icons.add_rounded,
-                size: 32,
-              ),
-            ),
-          ),
-        ),
-        floatingActionButtonLocation: centerDocked,
         bottomNavigationBar: Theme(
           data: Get.theme.copyWith(
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
             bottomAppBarTheme: Get.theme.bottomAppBarTheme.copyWith(
-              color: Colors.white.withAlpha(255),
+              color: AppColor.primaryColor,
               elevation: 0,
-              shape: const CircularNotchedRectangle(),
-              surfaceTintColor: Colors.white.withAlpha(255),
             ),
           ),
-          child: BottomAppBar(
-            height: 60,
-            clipBehavior: Clip.antiAlias,
-            elevation: 0,
-            notchMargin: 2.88,
-            padding: const EdgeInsets.only(
-              left: 8,
-              right: 8,
+          child: Container(
+            decoration: BoxDecoration(
+              color: AppColor.primaryColor,
+              borderRadius: const BorderRadius.only(
+                topRight: Radius.circular(80),
+                topLeft: Radius.circular(80),
+                bottomLeft: Radius.circular(40),
+                bottomRight: Radius.circular(40),
+              ),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                buildBottomBarItem(
-                  controller,
-                  icon: "assets/icons/home.svg",
-                  label: 'Home',
-                  index: 0,
+            child: ClipRRect(
+              borderRadius: const BorderRadius.only(
+                topRight: Radius.circular(80),
+                topLeft: Radius.circular(80),
+                bottomLeft: Radius.circular(40),
+                bottomRight: Radius.circular(40),
+              ),
+              child: BottomAppBar(
+                clipBehavior: Clip.antiAlias,
+                height: 93 - Get.mediaQuery.viewPadding.bottom,
+                elevation: 0,
+                padding: const EdgeInsets.only(
+                  left: 32,
+                  right: 32,
+                  top: 18.5,
                 ),
-              ],
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    buildBottomBarItem(
+                      controller,
+                      icon: 'assets/icons/home.svg',
+                      activeIcon: 'assets/icons/home-active.svg',
+                      label: 'Home',
+                      index: 0,
+                    ),
+                    buildBottomBarItem(
+                      controller,
+                      icon: 'assets/icons/search.svg',
+                      activeIcon: 'assets/icons/search-active.svg',
+                      label: 'Search',
+                      index: 1,
+                    ),
+                    buildBottomBarItem(
+                      controller,
+                      icon: 'assets/icons/books.svg',
+                      activeIcon: 'assets/icons/books-active.svg',
+                      label: 'Saved',
+                      index: 2,
+                    ),
+                    buildBottomBarItem(
+                      controller,
+                      icon: 'assets/icons/chat.svg',
+                      activeIcon: 'assets/icons/chat-active.svg',
+                      label: 'Chat',
+                      index: 3,
+                    ),
+                    buildBottomBarItem(
+                      controller,
+                      icon: 'assets/icons/profile.svg',
+                      activeIcon: 'assets/icons/profile-active.svg',
+                      label: 'Profile',
+                      index: 4,
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
         ),
@@ -121,170 +140,134 @@ class HomeScreen extends GetView<HomeController> {
   Widget buildBottomBarItem(
     HomeController controller, {
     required String icon,
+    required String activeIcon,
     required String label,
     required int index,
   }) {
-    var activeText = Text(
-      label,
-      style: const TextStyle(
-        fontWeight: FontWeight.w600,
-        fontSize: 11,
-        height: 0.09,
-      ),
-    );
-    var inactiveText = Text(
-      label,
-      style: const TextStyle(
-        color: AppColor.greyTextColor,
-        fontWeight: FontWeight.w500,
-        fontSize: 11,
-        height: 0.09,
-      ),
-    );
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        IconButton(
-          icon: Obx(
-            () {
-              if (controller.selectedIndex.value == index) {
-                return SvgPicture.asset(
-                  icon,
+    return Obx(
+      () {
+        // FirstChild is Active Icon, SecondChild is Inactive Icon
+        Widget firstChild = AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          height: 40,
+          curve: Curves.easeInOutCubicEmphasized,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(100),
+            shape: BoxShape.rectangle,
+          ),
+          child: IconButton(
+            onPressed: () {
+              controller.changePage(index);
+            },
+            style: ButtonStyle(
+              splashFactory: NoSplash.splashFactory,
+              padding: WidgetStateProperty.all(
+                const EdgeInsets.only(
+                  right: 16,
+                  top: 8,
+                  bottom: 8,
+                  left: 8,
+                ),
+              ),
+              shape: WidgetStateProperty.all(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(100),
+                ),
+              ),
+              enableFeedback: true,
+              maximumSize: WidgetStateProperty.all(
+                const Size(double.infinity, 40),
+              ),
+              elevation: WidgetStateProperty.resolveWith(
+                (states) {
+                  if (states.contains(WidgetState.pressed)) {
+                    return 2;
+                  }
+                  return 0;
+                },
+              ),
+            ),
+            icon: Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SvgPicture.asset(
+                  activeIcon,
                   width: 24,
                   height: 24,
-                );
-              }
-
-              return SvgPicture.asset(
-                icon,
-                width: 24,
-                height: 24,
-              );
-            },
+                ),
+                if (controller.selectedIndex.value == index)
+                  const SizedBox(width: 4),
+                if (controller.selectedIndex.value == index)
+                  Flexible(
+                    child: Text(
+                      label,
+                      style: const TextStyle(
+                        color: Color(0xFF6295A2),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+              ],
+            ),
           ),
-          onPressed: () {
-            controller.changePage(index);
-          },
-        ),
-        Obx(
-          () => controller.selectedIndex.value == index
-              ? activeText
-              : inactiveText,
-        ),
-      ],
+        );
+        Widget secondChild = AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          height: 40,
+          curve: Curves.easeInOutCubicEmphasized,
+          decoration: const BoxDecoration(
+            shape: BoxShape.rectangle,
+            color: Colors.transparent,
+          ),
+          child: IconButton(
+            onPressed: () {
+              controller.changePage(index);
+            },
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            style: ButtonStyle(
+              splashFactory: NoSplash.splashFactory,
+              shape: WidgetStateProperty.all(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(100),
+                ),
+              ),
+              enableFeedback: true,
+              maximumSize: WidgetStateProperty.all(
+                const Size(double.infinity, 40),
+              ),
+              elevation: WidgetStateProperty.resolveWith(
+                (states) {
+                  if (states.contains(WidgetState.pressed)) {
+                    return 2;
+                  }
+                  return 0;
+                },
+              ),
+            ),
+            icon: SvgPicture.asset(
+              icon,
+              width: 24,
+              height: 24,
+            ),
+          ),
+        );
+        return AnimatedCrossFade(
+          firstChild: firstChild,
+          firstCurve: Curves.easeInOutCubicEmphasized,
+          secondChild: secondChild,
+          secondCurve: Curves.easeInOutCubic,
+          crossFadeState: controller.selectedIndex.value == index
+              ? CrossFadeState.showFirst
+              : CrossFadeState.showSecond,
+          duration: const Duration(milliseconds: 300),
+        );
+      },
     );
-  }
-}
-
-class _CenterDockedFabLocation extends StandardFabLocation
-    with FabCenterOffsetX, _FabDockedOffsetY {
-  const _CenterDockedFabLocation();
-
-  @override
-  String toString() => 'FloatingActionButtonLocation.centerDocked';
-}
-
-class _CenterDockedFloatingActionButtonLocation
-    extends _DockedFloatingActionButtonLocation {
-  const _CenterDockedFloatingActionButtonLocation();
-
-  @override
-  Offset getOffset(ScaffoldPrelayoutGeometry scaffoldGeometry) {
-    final double fabX = (scaffoldGeometry.scaffoldSize.width -
-            scaffoldGeometry.floatingActionButtonSize.width) /
-        2.0;
-    return Offset(fabX, getDockedY(scaffoldGeometry));
-  }
-}
-
-mixin _FabCenterOffsetX on StandardFabLocation {
-  @override
-  double getOffsetX(
-      ScaffoldPrelayoutGeometry scaffoldGeometry, double adjustment) {
-    return (scaffoldGeometry.scaffoldSize.width -
-            scaffoldGeometry.floatingActionButtonSize.width) /
-        2.0;
-  }
-}
-
-mixin _FabDockedOffsetY on StandardFabLocation {
-  /// Calculates y-offset for [FloatingActionButtonLocation]s floating over the
-  /// [Scaffold.bottomNavigationBar] so that the center of the floating
-  /// action button lines up with the top of the bottom navigation bar.
-  @override
-  double getOffsetY(
-      ScaffoldPrelayoutGeometry scaffoldGeometry, double adjustment) {
-    final double contentBottom = scaffoldGeometry.contentBottom + 10;
-    final double contentMargin =
-        scaffoldGeometry.scaffoldSize.height - contentBottom;
-    final double bottomViewPadding = scaffoldGeometry.minViewPadding.bottom;
-    final double bottomSheetHeight = scaffoldGeometry.bottomSheetSize.height;
-    final double fabHeight = scaffoldGeometry.floatingActionButtonSize.height;
-    final double snackBarHeight = scaffoldGeometry.snackBarSize.height;
-    final double bottomMinInset = scaffoldGeometry.minInsets.bottom;
-
-    double safeMargin;
-
-    if (contentMargin > bottomMinInset + fabHeight / 2.0) {
-      // If contentMargin is higher than bottomMinInset enough to display the
-      // FAB without clipping, don't provide a margin
-      safeMargin = 0.0;
-    } else if (bottomMinInset == 0.0) {
-      // If bottomMinInset is zero(the software keyboard is not on the screen)
-      // provide bottomViewPadding as margin
-      safeMargin = bottomViewPadding;
-    } else {
-      // Provide a margin that would shift the FAB enough so that it stays away
-      // from the keyboard
-      safeMargin = fabHeight / 2.0 + kFloatingActionButtonMargin;
-    }
-
-    double fabY = contentBottom - fabHeight / 2.0 - safeMargin;
-    // The FAB should sit with a margin between it and the snack bar.
-    if (snackBarHeight > 0.0) {
-      fabY = math.min(
-          fabY,
-          contentBottom -
-              snackBarHeight -
-              fabHeight -
-              kFloatingActionButtonMargin);
-    }
-    // The FAB should sit with its center in front of the top of the bottom sheet.
-    if (bottomSheetHeight > 0.0) {
-      fabY =
-          math.min(fabY, contentBottom - bottomSheetHeight - fabHeight / 2.0);
-    }
-    final double maxFabY =
-        scaffoldGeometry.scaffoldSize.height - fabHeight - safeMargin - 10;
-    return math.min(maxFabY, fabY);
-  }
-}
-
-abstract class _DockedFloatingActionButtonLocation
-    extends FloatingActionButtonLocation {
-  const _DockedFloatingActionButtonLocation();
-  @protected
-  double getDockedY(ScaffoldPrelayoutGeometry scaffoldGeometry) {
-    final double contentBottom = scaffoldGeometry.contentTop + 10;
-    final double appBarHeight = scaffoldGeometry.bottomSheetSize.height;
-    final double fabHeight = scaffoldGeometry.floatingActionButtonSize.height;
-    final double snackBarHeight = scaffoldGeometry.snackBarSize.height;
-
-    double fabY = contentBottom - fabHeight / 2.0;
-    if (snackBarHeight > 0.0) {
-      fabY = math.min(
-          fabY,
-          contentBottom -
-              snackBarHeight -
-              fabHeight -
-              kFloatingActionButtonMargin);
-    }
-    if (appBarHeight > 0.0) {
-      fabY = math.min(fabY, contentBottom - appBarHeight - fabHeight / 2.0);
-    }
-
-    final double maxFabY = scaffoldGeometry.scaffoldSize.height - fabHeight;
-    return math.min(maxFabY, fabY);
   }
 }

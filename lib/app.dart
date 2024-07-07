@@ -17,6 +17,7 @@ class Main extends StatelessWidget {
       initialRoute: initialRoute,
       theme: ThemeData(
         brightness: Brightness.light,
+        canvasColor: Colors.transparent,
         colorScheme: ColorScheme.light(
           primary: AppColor.primaryColor,
           secondary: AppColor.secondaryColor,
