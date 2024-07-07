@@ -1,4 +1,7 @@
-import 'package:get/get.dart';
+import 'dart:io';
+
+import 'package:dio/dio.dart';
+import 'package:get/get.dart' hide Response;
 
 import '../../domain/interfaces/auth.repository.interface.dart';
 import '../../infrastructure/constant.dart';
@@ -10,7 +13,19 @@ class AuthRepository implements IAuthRepository {
   static final ApiService _apiService = Get.find<ApiService>();
 
   @override
+  Future<Response<dynamic>> csrfCookie() async {
+    try {
+      final response = await _apiService.get(AppUrl.csrfToken);
+
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
   Future<UserResponse> login(
+    Cookie? csrfCookie,
     String email,
     String password,
     String deviceName,
@@ -18,6 +33,11 @@ class AuthRepository implements IAuthRepository {
     try {
       final response = await _apiService.post(
         AppUrl.login,
+        options: Options(
+          headers: {
+            'X-XSRF-TOKEN': Uri.decodeFull(csrfCookie?.value ?? ''),
+          },
+        ),
         data: {
           'email': email,
           'password': password,
@@ -33,6 +53,7 @@ class AuthRepository implements IAuthRepository {
 
   @override
   Future<UserResponse> loginGoogle(
+    Cookie? csrfCookie,
     String name,
     String email,
     String googleId,
@@ -41,6 +62,11 @@ class AuthRepository implements IAuthRepository {
     try {
       final response = await _apiService.post(
         AppUrl.loginGoogle,
+        options: Options(
+          headers: {
+            'X-XSRF-TOKEN': Uri.decodeFull(csrfCookie?.value ?? ''),
+          },
+        ),
         data: {
           'name': name,
           'email': email,

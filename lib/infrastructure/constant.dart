@@ -23,6 +23,7 @@ class AppUrl {
   // connectTimeout
   static const int connectionTimeout = 30000;
 
+  static const String csrfToken = '/auth/csrf-cookie';
   static const String login = '/auth/login';
   static const String loginGoogle = '/auth/login-google';
   static const String logout = '/auth/logout';

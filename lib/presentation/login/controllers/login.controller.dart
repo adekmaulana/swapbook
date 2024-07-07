@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../domain/case/auth/csrf_cookie.case.dart';
 import '../../../domain/case/auth/login.case.dart';
 import '../../../infrastructure/constant.dart';
 import '../../../infrastructure/theme/app.widget.dart';
@@ -17,8 +19,31 @@ class LoginController extends BaseController {
   Rx<String?> passwordError = Rx<String?>(null);
   RxBool isPasswordVisible = false.obs;
 
+  Cookie? csrfCookie;
+
   @override
-  void onInit() {
+  void onInit() async {
+    try {
+      final response = await AuthCSRFCookieCase().call();
+      if (response.statusCode == HttpStatus.noContent) {
+        response.headers.forEach(
+          (name, values) {
+            if (name == HttpHeaders.setCookieHeader) {
+              for (String value in values) {
+                String key = value.substring(0, value.indexOf('=')).trim();
+
+                if (key == 'XSRF-TOKEN') {
+                  csrfCookie = Cookie.fromSetCookieValue(value);
+                }
+              }
+            }
+          },
+        );
+      }
+    } finally {
+      showLoading(false);
+    }
+
     super.onInit();
   }
 
@@ -43,6 +68,7 @@ class LoginController extends BaseController {
     showLoading(true);
     try {
       final userResponse = await AuthLoginCase().call(
+        csrfCookie,
         emailController.text,
         passwordController.text,
       );

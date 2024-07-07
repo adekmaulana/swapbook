@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
@@ -6,6 +7,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:swapbook/presentation/controller.dart.dart';
 
 import '../../../data/dto/user.response.dart';
+import '../../../domain/case/auth/csrf_cookie.case.dart';
 import '../../../domain/case/auth/login_google.case.dart';
 import '../../../infrastructure/constant.dart';
 import '../../../infrastructure/theme/app.widget.dart';
@@ -15,8 +17,31 @@ class WelcomeController extends BaseController {
     scopes: ['openid', 'email', 'profile'],
   );
 
+  Cookie? csrfCookie;
+
   @override
-  void onInit() {
+  void onInit() async {
+    showLoading(true);
+    try {
+      final response = await AuthCSRFCookieCase().call();
+      if (response.statusCode == HttpStatus.noContent) {
+        response.headers.forEach(
+          (name, values) {
+            if (name == HttpHeaders.setCookieHeader) {
+              for (String value in values) {
+                String key = value.substring(0, value.indexOf('=')).trim();
+
+                if (key == 'XSRF-TOKEN') {
+                  csrfCookie = Cookie.fromSetCookieValue(value);
+                }
+              }
+            }
+          },
+        );
+      }
+    } finally {
+      showLoading(false);
+    }
     super.onInit();
   }
 
@@ -46,6 +71,7 @@ class WelcomeController extends BaseController {
       }
 
       final UserResponse userResponse = await AuthLoginGoogleCase().call(
+        csrfCookie,
         googleAccount.displayName ?? '',
         googleAccount.email,
         googleAccount.id,
