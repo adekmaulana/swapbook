@@ -23,6 +23,10 @@ class ApiService extends GetxService {
     headers: {
       HttpHeaders.acceptHeader: Headers.jsonContentType,
     },
+    extra: {
+      'withCredentials': true,
+      'withXSRFToken': true,
+    },
     validateStatus: (status) {
       return status != null && status >= 200 && status < 300;
     },

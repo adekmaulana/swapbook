@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:keyboard_detection/keyboard_detection.dart';
 
 import '../../infrastructure/theme/app.color.dart';
-import '../../infrastructure/theme/app.widget.dart';
 import 'controllers/home.controller.dart';
 
 class HomeScreen extends GetView<HomeController> {
@@ -97,41 +96,6 @@ class HomeScreen extends GetView<HomeController> {
               ),
             ),
           ),
-        ),
-        body: LayoutBuilder(
-          builder: (
-            BuildContext context,
-            BoxConstraints constraints,
-          ) {
-            controller.isPotrait.value = MediaQuery.of(
-                  context,
-                ).orientation ==
-                Orientation.portrait;
-            return SizedBox(
-              // button logout
-              width: constraints.maxWidth,
-              height: constraints.maxHeight,
-              child: MaterialButton(
-                onPressed: () async {
-                  await controller.logout();
-                },
-                color: AppColor.secondaryColor,
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-                enableFeedback: true,
-                highlightElevation: 2,
-                elevation: 0,
-                child: const Text(
-                  'Logout',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-            );
-          },
         ),
       ),
     );

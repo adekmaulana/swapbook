@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../data/dto/base.response.dart';
 import '../../../domain/case/auth/register.case.dart';
 import '../../../infrastructure/theme/app.widget.dart';
 import '../../controller.dart.dart';
@@ -49,7 +48,7 @@ class RegisterController extends BaseController {
 
     showLoading(true);
     try {
-      final response = await AuthRegisterCase().call(
+      await AuthRegisterCase().call(
         nameController.text,
         emailController.text,
         passwordController.text,
@@ -129,6 +128,5 @@ class RegisterController extends BaseController {
 
   void loseFocus() {
     return;
-    FocusManager.instance.primaryFocus?.unfocus();
   }
 }
