@@ -44,12 +44,6 @@ class Main extends StatelessWidget {
                 borderRadius: BorderRadius.circular(32),
               ),
             ),
-            textStyle: WidgetStateProperty.all(
-              const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
             splashFactory: NoSplash.splashFactory,
             elevation: WidgetStateProperty.all(0),
             enableFeedback: true,

@@ -1,5 +1,12 @@
-export 'package:swapbook/infrastructure/navigation/bindings/controllers/forgot_pass.controller.binding.dart'; 
+export 'package:swapbook/infrastructure/navigation/bindings/controllers/bookmarks.controller.binding.dart';
+export 'package:swapbook/infrastructure/navigation/bindings/controllers/chat.controller.binding.dart';
+export 'package:swapbook/infrastructure/navigation/bindings/controllers/chat_find.controller.binding.dart';
+export 'package:swapbook/infrastructure/navigation/bindings/controllers/chatroom.controller.binding.dart'; 
+export 'package:swapbook/infrastructure/navigation/bindings/controllers/forgot_pass.controller.binding.dart';
 export 'package:swapbook/infrastructure/navigation/bindings/controllers/home.controller.binding.dart';
+export 'package:swapbook/infrastructure/navigation/bindings/controllers/katalog.controller.binding.dart';
 export 'package:swapbook/infrastructure/navigation/bindings/controllers/login.controller.binding.dart';
+export 'package:swapbook/infrastructure/navigation/bindings/controllers/profile.controller.binding.dart';
 export 'package:swapbook/infrastructure/navigation/bindings/controllers/register.controller.binding.dart';
-export 'package:swapbook/infrastructure/navigation/bindings/controllers/welcome.controller.binding.dart'; 
+export 'package:swapbook/infrastructure/navigation/bindings/controllers/search.controller.binding.dart';
+export 'package:swapbook/infrastructure/navigation/bindings/controllers/welcome.controller.binding.dart';

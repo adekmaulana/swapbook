@@ -5,6 +5,7 @@ class AppColor {
 
   static const int _primaryColor = 0xFF3D6E99;
   static const int _secondaryColor = 0xFFFFAA13;
+  static const int _accentColor = 0xFF6295A2;
 
   static MaterialColor primaryColor = const MaterialColor(
     _primaryColor,
@@ -35,6 +36,22 @@ class AppColor {
       700: Color(0xFFD97600),
       800: Color(0xFFC66300),
       900: Color(0xFFB25000),
+    },
+  );
+
+  static MaterialColor accentColor = const MaterialColor(
+    _accentColor,
+    <int, Color>{
+      50: Color(0xFFE0F2F1),
+      100: Color(0xFFB2DFDB),
+      200: Color(0xFF80CBC4),
+      300: Color(0xFF4DB6AC),
+      400: Color(0xFF26A69A),
+      500: Color(_accentColor),
+      600: Color(0xFF00796B),
+      700: Color(0xFF00695C),
+      800: Color(0xFF005A4E),
+      900: Color(0xFF004D40),
     },
   );
 

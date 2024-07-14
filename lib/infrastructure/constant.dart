@@ -10,6 +10,17 @@ class LocalRepositoryKey {
   static const String APNS_TOKEN = 'apnsToken';
 }
 
+class MessageType {
+  MessageType._();
+
+  static const String REQUEST = 'request';
+  static const String TEXT = 'text';
+  static const String IMAGE = 'image';
+  static const String VIDEO = 'video';
+  static const String AUDIO = 'audio';
+  static const String FILE = 'file';
+}
+
 class AppUrl {
   AppUrl._();
 
@@ -29,4 +40,15 @@ class AppUrl {
   static const String logout = '/auth/logout';
   static const String register = '/auth/register';
   static const String forgotPassword = '/auth/forgot-password';
+
+  // Chats
+  static const String chat = '/chat';
+  static const String chats = '/chats';
+
+  // Users
+  static const String users = '/users';
+
+  // Messages
+  static const String messages = '/messages';
+  static const String message = '/message';
 }

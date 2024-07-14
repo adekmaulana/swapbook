@@ -10,7 +10,7 @@ import '../dto/base.response.dart';
 import '../dto/user.response.dart';
 
 class AuthRepository implements IAuthRepository {
-  static final ApiService _apiService = Get.find<ApiService>();
+  final ApiService _apiService = Get.find<ApiService>();
 
   @override
   Future<Response<dynamic>> csrfCookie() async {

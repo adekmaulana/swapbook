@@ -21,9 +21,16 @@ class Routes {
     return WELCOME;
   }
 
-  static const HOME = '/home';
-  static const LOGIN = '/login';
-  static const REGISTER = '/register';
-  static const WELCOME = '/welcome';
+  static const BOOKMARKS = '/bookmarks';
+  static const CHAT = '/chat';
+  static const CHAT_FIND = '/chat-find';
   static const FORGOT_PASS = '/forgot-pass';
+  static const HOME = '/home';
+  static const KATALOG = '/katalog';
+  static const LOGIN = '/login';
+  static const PROFILE = '/profile';
+  static const REGISTER = '/register';
+  static const SEARCH = '/search';
+  static const WELCOME = '/welcome';
+  static const CHAT_ROOM = '/chat-room';
 }

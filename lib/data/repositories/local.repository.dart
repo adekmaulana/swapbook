@@ -1,7 +1,9 @@
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class LocalRepository extends GetxService {
+import '../../domain/interfaces/local.repository.interface.dart';
+
+class LocalRepository extends GetxService implements ILocalRepository {
   LocalRepository();
 
   late SharedPreferences _preferences;
@@ -11,6 +13,7 @@ class LocalRepository extends GetxService {
     return this;
   }
 
+  @override
   Future<void> put(String key, dynamic value) async {
     if (value is String) {
       _preferences.setString(key, value);
@@ -25,6 +28,7 @@ class LocalRepository extends GetxService {
     }
   }
 
+  @override
   Future<dynamic> get<T>(String key, dynamic defaultValue) async {
     if (defaultValue is String) {
       return _preferences.getString(key) ?? defaultValue;
@@ -39,11 +43,13 @@ class LocalRepository extends GetxService {
     }
   }
 
-  remove(String key) async {
-    return _preferences.remove(key);
+  @override
+  Future<bool> remove(String key) async {
+    return await _preferences.remove(key);
   }
 
-  removeAll() async {
-    return _preferences.clear();
+  @override
+  Future<bool> removeAll() async {
+    return await _preferences.clear();
   }
 }

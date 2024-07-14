@@ -110,12 +110,13 @@ class AppWidget {
 
   static Widget getLoadingIndicator({
     Color? color,
-    double sizeIOS = 8.0,
+    double sizeIOS = 10.0,
     double sizeAndroid = 12.0,
     bool dense = false,
+    Alignment alignment = Alignment.center,
   }) {
     return Container(
-      alignment: Alignment.center,
+      alignment: alignment,
       width: dense ? double.infinity : null,
       height: dense
           ? (Get.mediaQuery.size.height / 2) +
@@ -179,6 +180,55 @@ class AppWidget {
       notificationContent,
       platformChannelSpecifics,
       payload: payload,
+    );
+  }
+
+  static Future<T?> showBottomSheet<T>({
+    String? routeName,
+    dynamic arguments,
+    required Widget child,
+  }) async {
+    return Get.bottomSheet<T>(
+      isScrollControlled: true,
+      settings: RouteSettings(
+        name: routeName,
+        arguments: arguments,
+      ),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(50),
+          topRight: Radius.circular(50),
+        ),
+      ),
+      Container(
+        height: Get.height - Get.mediaQuery.viewPadding.top,
+        decoration: BoxDecoration(
+          color: AppColor.backgroundColor,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(50),
+            topRight: Radius.circular(50),
+          ),
+          image: DecorationImage(
+            image: Image.asset(
+              'assets/images/background-bottomsheet.png',
+              scale: 4,
+            ).image,
+            fit: BoxFit.cover,
+            colorFilter: ColorFilter.mode(
+              AppColor.backgroundColor.withOpacity(0.08),
+              BlendMode.hardLight,
+            ),
+          ),
+          boxShadow: const [
+            BoxShadow(
+              color: Color.fromRGBO(0, 0, 0, 0.25),
+              blurRadius: 4.35,
+              offset: Offset(0, 4.35),
+            ),
+          ],
+        ),
+        child: child,
+      ),
     );
   }
 }

@@ -15,19 +15,22 @@ class ForgotPassScreen extends GetView<ForgotPassController> {
     return Container(
       decoration: BoxDecoration(
         color: AppColor.backgroundColor,
+        backgroundBlendMode: BlendMode.hardLight,
         image: DecorationImage(
           image: Image.asset(
             'assets/images/background-forgotpass.png',
-            color: AppColor.backgroundColor.withOpacity(0.08),
-            colorBlendMode: BlendMode.hardLight,
           ).image,
           fit: BoxFit.cover,
+          colorFilter: ColorFilter.mode(
+            AppColor.backgroundColor.withOpacity(0.08),
+            BlendMode.hardLight,
+          ),
         ),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
-            color: const Color(0x40000000).withOpacity(0.08),
+            color: Color.fromRGBO(0, 0, 0, 0.25),
             blurRadius: 4.35,
-            offset: const Offset(0, 4.35),
+            offset: Offset(0, 4.35),
           ),
         ],
       ),
@@ -67,20 +70,36 @@ class ForgotPassScreen extends GetView<ForgotPassController> {
                 padding: const EdgeInsets.only(
                   left: 24,
                   right: 24,
-                  top: 44,
                 ),
                 child: Column(
                   children: [
-                    const Text(
-                      'We will email you a link to reset your password.',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: AppColor.baseBlackColor,
+                    const SizedBox(height: 28),
+                    const SizedBox(
+                      height: 52,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            'We will email you',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: AppColor.baseBlackColor,
+                            ),
+                          ),
+                          Text(
+                            'a link to reset your password.',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: AppColor.baseBlackColor,
+                            ),
+                          ),
+                        ],
                       ),
-                      textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 16),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -107,6 +126,8 @@ class ForgotPassScreen extends GetView<ForgotPassController> {
                                 fontWeight: FontWeight.w400,
                                 color: AppColor.secondaryGreyColor,
                               ),
+                              filled: true,
+                              fillColor: AppColor.backgroundColor,
                               contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 16,
                                 vertical: 16,

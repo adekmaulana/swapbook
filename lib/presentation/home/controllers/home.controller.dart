@@ -1,11 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:keyboard_detection/keyboard_detection.dart';
 
 import '../../../domain/case/auth/logout.case.dart';
 import '../../../infrastructure/navigation/routes.dart';
 import '../../controller.dart.dart';
+import '../../screens.dart';
 
 class HomeController extends BaseController with StateMixin<bool> {
   PageController pageController = PageController();
@@ -16,12 +16,15 @@ class HomeController extends BaseController with StateMixin<bool> {
   RxDouble keyboardHeight = 0.0.obs;
   RxBool keyboardOpened = false.obs;
   RxInt selectedIndex = 0.obs;
-  RxBool isFabVisible = false.obs;
-  RxString currentRoute = '/home'.obs;
-  RxInt notificationCount = 0.obs;
   RxBool isPotrait = true.obs;
 
-  List<Widget> pages = const [];
+  List<Widget> pages = const [
+    KatalogScreen(),
+    SearchScreen(),
+    BookmarksScreen(),
+    ChatScreen(),
+    ProfileScreen(),
+  ];
 
   @override
   void onInit() async {
@@ -41,49 +44,11 @@ class HomeController extends BaseController with StateMixin<bool> {
 
   void changePage(int index) {
     selectedIndex.value = index;
-    // Get.nestedKey(index + 1)?.currentState?.popUntil((route) {
-    //   currentRoute.value = route.settings.name ?? Routes.HOME;
-    //   return true;
-    // });
-
-    // pageController.animateToPage(
-    //   index,
-    //   duration: const Duration(milliseconds: 300),
-    //   curve: Curves.easeInOutCirc,
-    // );
-  }
-
-  void onKeyboardState(KeyboardState state) {
-    switch (state) {
-      case KeyboardState.hiding:
-        isFabVisible.value = true;
-        break;
-      case KeyboardState.hidden:
-        keyboardOpened.value = false;
-        keyboardHeight.value = 0.0;
-        break;
-      case KeyboardState.visibling:
-        isFabVisible.value = false;
-        break;
-      case KeyboardState.visible:
-        keyboardOpened.value = true;
-        keyboardHeight.value = Get.mediaQuery.viewInsets.bottom;
-        break;
-      default:
-        break;
-    }
-  }
-
-  void pop({dynamic result, int? id}) {
-    int key = id ?? selectedIndex.value + 1;
-    Get.back(
-      result: result,
-      id: key,
+    pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 350),
+      curve: Curves.easeInOutCirc,
     );
-    Get.nestedKey(key)?.currentState?.popUntil((currentRoute) {
-      this.currentRoute.value = currentRoute.settings.name ?? Routes.HOME;
-      return true;
-    });
   }
 
   Future<void> logout() async {
@@ -94,15 +59,9 @@ class HomeController extends BaseController with StateMixin<bool> {
 
       Get.offAllNamed(Routes.WELCOME);
     } catch (e) {
-      if (e is DioException) {
-        if (e.response?.statusCode == 401) {
-          await localRepository.removeAll();
+      await localRepository.removeAll();
 
-          return Get.offAllNamed(Routes.WELCOME);
-        }
-      }
-
-      rethrow;
+      return Get.offAllNamed(Routes.WELCOME);
     }
   }
 }

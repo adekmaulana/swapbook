@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
-import 'package:keyboard_detection/keyboard_detection.dart';
 
 import '../../infrastructure/theme/app.color.dart';
 import 'controllers/home.controller.dart';
@@ -12,91 +11,215 @@ class HomeScreen extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
-    return KeyboardDetection(
-      controller: KeyboardDetectionController(
-        onChanged: controller.onKeyboardState,
-      ),
-      child: Scaffold(
-        key: controller.scaffoldKey,
-        resizeToAvoidBottomInset: true,
-        extendBody: true,
-        bottomNavigationBar: Theme(
-          data: Get.theme.copyWith(
-            bottomAppBarTheme: Get.theme.bottomAppBarTheme.copyWith(
-              color: AppColor.primaryColor,
-              elevation: 0,
-            ),
+    return Scaffold(
+      key: controller.scaffoldKey,
+      resizeToAvoidBottomInset: true,
+      extendBody: true,
+      drawer: Drawer(
+        width: Get.width * 0.55,
+        backgroundColor: AppColor.backgroundColor,
+        child: SafeArea(
+          minimum: const EdgeInsets.only(
+            left: 24,
+            right: 24,
           ),
-          child: Container(
-            decoration: BoxDecoration(
-              color: AppColor.primaryColor,
-              borderRadius: const BorderRadius.only(
-                topRight: Radius.circular(80),
-                topLeft: Radius.circular(80),
-                bottomLeft: Radius.circular(40),
-                bottomRight: Radius.circular(40),
-              ),
-            ),
-            child: ClipRRect(
-              borderRadius: const BorderRadius.only(
-                topRight: Radius.circular(80),
-                topLeft: Radius.circular(80),
-                bottomLeft: Radius.circular(40),
-                bottomRight: Radius.circular(40),
-              ),
-              child: BottomAppBar(
-                clipBehavior: Clip.antiAlias,
-                height: 93 - Get.mediaQuery.viewPadding.bottom,
-                elevation: 0,
-                padding: const EdgeInsets.only(
-                  left: 32,
-                  right: 32,
-                  top: 18.5,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: AppBar().preferredSize.height,
+                width: double.infinity,
+                child: const Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    buildBottomBarItem(
-                      controller,
-                      icon: 'assets/icons/home.svg',
-                      activeIcon: 'assets/icons/home-active.svg',
-                      label: 'Home',
-                      index: 0,
+                    SizedBox(
+                      width: 50,
+                      height: 50,
+                      child: CircleAvatar(),
                     ),
-                    buildBottomBarItem(
-                      controller,
-                      icon: 'assets/icons/search.svg',
-                      activeIcon: 'assets/icons/search-active.svg',
-                      label: 'Search',
-                      index: 1,
-                    ),
-                    buildBottomBarItem(
-                      controller,
-                      icon: 'assets/icons/books.svg',
-                      activeIcon: 'assets/icons/books-active.svg',
-                      label: 'Saved',
-                      index: 2,
-                    ),
-                    buildBottomBarItem(
-                      controller,
-                      icon: 'assets/icons/chat.svg',
-                      activeIcon: 'assets/icons/chat-active.svg',
-                      label: 'Chat',
-                      index: 3,
-                    ),
-                    buildBottomBarItem(
-                      controller,
-                      icon: 'assets/icons/profile.svg',
-                      activeIcon: 'assets/icons/profile-active.svg',
-                      label: 'Profile',
-                      index: 4,
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Wrap(
+                        alignment: WrapAlignment.start,
+                        children: [
+                          Text(
+                            'Vanessa',
+                            style: TextStyle(
+                              color: AppColor.primaryBlackColor,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Text(
+                            'vanessa31',
+                            style: TextStyle(
+                              color: AppColor.borderColor,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
               ),
+              const Spacer(),
+              IconButton(
+                onPressed: () {},
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+                style: const ButtonStyle(
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  splashFactory: NoSplash.splashFactory,
+                ),
+                highlightColor: Colors.transparent,
+                splashColor: Colors.transparent,
+                iconSize: 20,
+                icon: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SvgPicture.asset(
+                      'assets/icons/setting.svg',
+                      width: 20,
+                      height: 20,
+                    ),
+                    const SizedBox(width: 16),
+                    const Text(
+                      'Setting',
+                      style: TextStyle(
+                        color: AppColor.primaryBlackColor,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 26),
+              IconButton(
+                onPressed: () async {
+                  await controller.logout();
+                },
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+                style: const ButtonStyle(
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  splashFactory: NoSplash.splashFactory,
+                ),
+                highlightColor: Colors.transparent,
+                splashColor: Colors.transparent,
+                iconSize: 20,
+                icon: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SvgPicture.asset(
+                      'assets/icons/logout.svg',
+                      width: 20,
+                      height: 20,
+                    ),
+                    const SizedBox(width: 16),
+                    const Text(
+                      'Sign Out',
+                      style: TextStyle(
+                        color: Color(0xFFFF8686),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: kBottomNavigationBarHeight),
+            ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: Theme(
+        data: Get.theme.copyWith(
+          bottomAppBarTheme: Get.theme.bottomAppBarTheme.copyWith(
+            color: AppColor.primaryColor,
+            elevation: 0,
+          ),
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            color: AppColor.primaryColor,
+            borderRadius: const BorderRadius.only(
+              topRight: Radius.circular(80),
+              topLeft: Radius.circular(80),
+              bottomLeft: Radius.circular(40),
+              bottomRight: Radius.circular(40),
+            ),
+          ),
+          child: ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topRight: Radius.circular(80),
+              topLeft: Radius.circular(80),
+              bottomLeft: Radius.circular(40),
+              bottomRight: Radius.circular(40),
+            ),
+            child: BottomAppBar(
+              clipBehavior: Clip.antiAlias,
+              height: 93 - Get.mediaQuery.viewPadding.bottom,
+              elevation: 0,
+              padding: const EdgeInsets.only(
+                left: 32,
+                right: 32,
+                top: 18.5,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  buildBottomBarItem(
+                    controller,
+                    icon: 'assets/icons/home.svg',
+                    activeIcon: 'assets/icons/home-active.svg',
+                    label: 'Home',
+                    index: 0,
+                  ),
+                  buildBottomBarItem(
+                    controller,
+                    icon: 'assets/icons/search.svg',
+                    activeIcon: 'assets/icons/search-active.svg',
+                    label: 'Search',
+                    index: 1,
+                  ),
+                  buildBottomBarItem(
+                    controller,
+                    icon: 'assets/icons/books.svg',
+                    activeIcon: 'assets/icons/books-active.svg',
+                    label: 'Saved',
+                    index: 2,
+                  ),
+                  buildBottomBarItem(
+                    controller,
+                    icon: 'assets/icons/chat.svg',
+                    activeIcon: 'assets/icons/chat-active.svg',
+                    label: 'Chat',
+                    index: 3,
+                  ),
+                  buildBottomBarItem(
+                    controller,
+                    icon: 'assets/icons/profile.svg',
+                    activeIcon: 'assets/icons/profile-active.svg',
+                    label: 'Profile',
+                    index: 4,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
+      ),
+      // logout,
+      body: PageView(
+        controller: controller.pageController,
+        children: controller.pages,
       ),
     );
   }

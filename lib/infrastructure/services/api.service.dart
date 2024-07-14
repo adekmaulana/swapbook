@@ -28,7 +28,7 @@ class ApiService extends GetxService {
       'withXSRFToken': true,
     },
     validateStatus: (status) {
-      return status != null && status >= 200 && status < 300;
+      return status != null && status >= 200 && status < 500;
     },
   );
 

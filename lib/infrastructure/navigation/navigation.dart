@@ -9,7 +9,15 @@ class Nav {
     GetPage(
       name: Routes.HOME,
       page: () => const HomeScreen(),
-      binding: HomeControllerBinding(),
+      bindings: [
+        HomeControllerBinding(),
+        KatalogControllerBinding(),
+        SearchControllerBinding(),
+        BookmarksControllerBinding(),
+        ChatControllerBinding(),
+        ProfileControllerBinding(),
+        ChatFindControllerBinding(),
+      ],
     ),
     GetPage(
       name: Routes.LOGIN,
@@ -32,6 +40,36 @@ class Nav {
       name: Routes.WELCOME,
       page: () => const WelcomeScreen(),
       binding: WelcomeControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.KATALOG,
+      page: () => const KatalogScreen(),
+      binding: KatalogControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.SEARCH,
+      page: () => const SearchScreen(),
+      binding: SearchControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.BOOKMARKS,
+      page: () => const BookmarksScreen(),
+      binding: BookmarksControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.CHAT,
+      page: () => const ChatScreen(),
+      binding: ChatControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.PROFILE,
+      page: () => const ProfileScreen(),
+      binding: ProfileControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.CHAT_ROOM,
+      page: () => const ChatroomScreen(),
+      binding: ChatroomControllerBinding(),
     ),
   ];
 }
