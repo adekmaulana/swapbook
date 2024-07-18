@@ -10,7 +10,10 @@ class ChatRepository implements IChatRepository {
   final ApiService _apiService = Get.find<ApiService>();
 
   @override
-  Future<ChatsResponse> getChats() async {
+  Future<ChatsResponse> getChats({
+    required int page,
+    int limit = 10,
+  }) async {
     try {
       final response = await _apiService.get(AppUrl.chats);
 

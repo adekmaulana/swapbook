@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../domain/case/auth/logout.case.dart';
+import '../../../domain/case/auth/ping.case.dart';
 import '../../../infrastructure/navigation/routes.dart';
 import '../../controller.dart.dart';
 import '../../screens.dart';
@@ -10,6 +13,7 @@ import '../../screens.dart';
 class HomeController extends BaseController with StateMixin<bool> {
   PageController pageController = PageController();
   GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  StreamSubscription? timerSubscription;
   bool isBottomSheetOpen = false;
   bool isDialogOpen = false;
 
@@ -29,6 +33,10 @@ class HomeController extends BaseController with StateMixin<bool> {
   @override
   void onInit() async {
     super.onInit();
+
+    // timerSubscription = Stream.periodic(30.seconds, (int count) {
+    //   ping();
+    // }).listen((event) {});
   }
 
   @override
@@ -39,6 +47,7 @@ class HomeController extends BaseController with StateMixin<bool> {
   @override
   void onClose() {
     pageController.dispose();
+    // timerSubscription?.cancel();
     super.onClose();
   }
 
@@ -62,6 +71,20 @@ class HomeController extends BaseController with StateMixin<bool> {
       await localRepository.removeAll();
 
       return Get.offAllNamed(Routes.WELCOME);
+    }
+  }
+
+  Future<void> ping() async {
+    try {
+      await AuthPingCase().call();
+    } catch (e) {
+      if (e is DioException) {
+        if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
+          await localRepository.removeAll();
+
+          return Get.offAllNamed(Routes.WELCOME);
+        }
+      }
     }
   }
 }

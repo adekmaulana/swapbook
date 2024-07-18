@@ -8,6 +8,7 @@ class Chat {
   DateTime? createdAt;
   DateTime? updatedAt;
   DateTime? deletedAt;
+  int? unreadCount;
   Message? lastMessage;
   List<Participant>? participants;
 
@@ -18,6 +19,7 @@ class Chat {
     this.createdAt,
     this.updatedAt,
     this.deletedAt,
+    this.unreadCount,
     this.lastMessage,
     this.participants,
   });
@@ -30,6 +32,7 @@ class Chat {
       createdAt: DateTime.tryParse(json['created_at'] ?? ''),
       updatedAt: DateTime.tryParse(json['updated_at'] ?? ''),
       deletedAt: DateTime.tryParse(json['deleted_at'] ?? ''),
+      unreadCount: json['unread_count'],
       lastMessage: json['last_message'] != null
           ? Message.fromJson(json['last_message'])
           : null,
@@ -50,6 +53,7 @@ class Chat {
       'created_at': createdAt?.toIso8601String(),
       'updated_at': updatedAt?.toIso8601String(),
       'deleted_at': deletedAt?.toIso8601String(),
+      'unread_count': unreadCount,
       'last_message': lastMessage?.toJson(),
       'participants': participants != null
           ? List<dynamic>.from(participants!.map((x) => x.toJson()))

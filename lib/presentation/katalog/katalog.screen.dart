@@ -5,7 +5,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:swapbook/presentation/home/wrapper.home.screen.dart';
 
-import '../../infrastructure/theme/app.color.dart';
 import 'controllers/katalog.controller.dart';
 
 class KatalogScreen extends GetView<KatalogController> {
@@ -37,36 +36,56 @@ class KatalogScreen extends GetView<KatalogController> {
                   ),
                 ),
               ),
+              const Spacer(),
+              SizedBox(
+                child: IconButton(
+                  onPressed: () {},
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  style: const ButtonStyle(
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  iconSize: 24,
+                  icon: SvgPicture.asset(
+                    'assets/icons/camera.svg',
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              SizedBox(
+                child: Stack(
+                  children: [
+                    IconButton(
+                      onPressed: () {},
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      style: const ButtonStyle(
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      iconSize: 24,
+                      icon: SvgPicture.asset(
+                        'assets/icons/notification.svg',
+                      ),
+                    ),
+                    Positioned(
+                      right: 4,
+                      top: 4,
+                      child: Container(
+                        width: 6,
+                        height: 6,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFDE0639),
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
           systemOverlayStyle: SystemUiOverlayStyle.dark,
           automaticallyImplyLeading: false,
-          actions: [
-            IconButton(
-              onPressed: () {},
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
-              style: const ButtonStyle(
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
-              iconSize: 24,
-              icon: SvgPicture.asset(
-                'assets/icons/camera.svg',
-              ),
-            ),
-            IconButton(
-              onPressed: () {},
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
-              style: const ButtonStyle(
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
-              iconSize: 24,
-              icon: SvgPicture.asset(
-                'assets/icons/notification.svg',
-              ),
-            ),
-          ],
         ),
         body: const Center(
           child: Text(

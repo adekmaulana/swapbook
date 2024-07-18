@@ -131,4 +131,15 @@ class AuthRepository implements IAuthRepository {
       rethrow;
     }
   }
+
+  @override
+  Future<BaseResponse> ping() async {
+    try {
+      final response = await _apiService.get(AppUrl.ping);
+
+      return BaseResponse.fromJson(response.data);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

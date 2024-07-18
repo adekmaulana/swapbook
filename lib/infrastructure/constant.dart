@@ -40,6 +40,7 @@ class AppUrl {
   static const String logout = '/auth/logout';
   static const String register = '/auth/register';
   static const String forgotPassword = '/auth/forgot-password';
+  static const String ping = '/auth/ping';
 
   // Chats
   static const String chat = '/chat';

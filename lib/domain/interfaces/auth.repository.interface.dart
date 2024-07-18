@@ -28,4 +28,5 @@ abstract class IAuthRepository {
   );
   Future<BaseResponse> logout();
   Future<BaseResponse> forgotPassword(String email);
+  Future<BaseResponse> ping();
 }

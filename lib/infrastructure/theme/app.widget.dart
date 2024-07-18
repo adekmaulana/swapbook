@@ -112,18 +112,8 @@ class AppWidget {
     Color? color,
     double sizeIOS = 10.0,
     double sizeAndroid = 12.0,
-    bool dense = false,
-    Alignment alignment = Alignment.center,
   }) {
-    return Container(
-      alignment: alignment,
-      width: dense ? double.infinity : null,
-      height: dense
-          ? (Get.mediaQuery.size.height / 2) +
-              (kBottomNavigationBarHeight) -
-              Get.mediaQuery.viewPadding.bottom +
-              6
-          : null,
+    return SizedBox(
       child: Platform.isIOS
           ? CupertinoActivityIndicator(
               color: color ?? AppColor.secondaryColor,

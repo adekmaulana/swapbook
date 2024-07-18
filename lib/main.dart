@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:swapbook/infrastructure/services/api.service.dart';
@@ -17,6 +18,7 @@ Future<void> bootstrap(AppBuilder builder) async {
     () async => await LocalRepository().init(),
     permanent: true,
   );
+  await dotenv.load(fileName: ".env");
 
   Get.put(ApiService(), permanent: true);
   await FirebaseService.init();

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
@@ -12,6 +13,7 @@ import '../../../data/models/user.model.dart';
 import '../../../data/repositories/local.repository.dart';
 import '../../../data/repositories/message.repository.dart';
 import '../../../infrastructure/constant.dart';
+import '../../../infrastructure/services/pusher.service.dart';
 import '../../../infrastructure/theme/app.widget.dart';
 import '../../chat/controllers/chat.controller.dart';
 
@@ -22,8 +24,6 @@ class ChatroomController extends GetxController with StateMixin {
   PagingController<int, Message>? pagingController;
   ChatController chatController = Get.find<ChatController>();
 
-  bool shouldRefresh = false;
-
   RxString chatInitial = ''.obs;
   RxString chatName = ''.obs;
   RxString message = ''.obs;
@@ -32,6 +32,7 @@ class ChatroomController extends GetxController with StateMixin {
   Rx<User> other = User().obs;
   RxList<Message> messages = <Message>[].obs;
   RxBool showEmoji = false.obs;
+  RxBool isOnline = false.obs;
 
   late Chat chat;
   @override
@@ -47,13 +48,11 @@ class ChatroomController extends GetxController with StateMixin {
       firstPageKey: 1,
     );
     pagingController?.addPageRequestListener((pageKey) {
-      _fetchMessages(
-        pageKey,
-        10,
-      );
+      _fetchMessages(pageKey, 10);
     });
 
     await init();
+    await readMessages();
     super.onInit();
   }
 
@@ -64,12 +63,10 @@ class ChatroomController extends GetxController with StateMixin {
 
   @override
   void onClose() {
+    disconnectChat(chat);
     messageController.dispose();
     pagingController?.dispose();
 
-    if (shouldRefresh) {
-      chatController.getChats();
-    }
     super.onClose();
   }
 
@@ -103,6 +100,19 @@ class ChatroomController extends GetxController with StateMixin {
             (word) => word[0],
           )
           .join('');
+
+      await initEcho();
+      chatController.pagingController?.itemList?.forEach((element) {
+        if (element.id == chat.id) {
+          int index =
+              chatController.pagingController?.itemList?.indexOf(element) ?? 0;
+          if (chatController.pagingController?.itemList?.remove(element) ==
+              true) {
+            chatController.pagingController?.itemList?.insert(index, chat);
+            chatController.pagingController?.appendLastPage([]);
+          }
+        }
+      });
       change(null, status: RxStatus.success());
     } catch (e) {
       change(null, status: RxStatus.error(e.toString()));
@@ -137,10 +147,7 @@ class ChatroomController extends GetxController with StateMixin {
         page + 1,
       );
     } catch (e) {
-      AppWidget.openSnackbar(
-        'Oops! Something went wrong',
-        'Failed to fetch messages. Please try again.',
-      );
+      pagingController?.error = e;
     }
   }
 
@@ -154,6 +161,7 @@ class ChatroomController extends GetxController with StateMixin {
       final response = await messageRepository.sendMessage(
         chat.id!,
         messageController.text,
+        EchoService.instance.socketId,
       );
 
       // Dont add to appendLastPage directly
@@ -161,10 +169,20 @@ class ChatroomController extends GetxController with StateMixin {
       pagingController?.itemList?.insert(0, response.message!);
       pagingController?.appendLastPage([]);
 
+      chatController.pagingController?.itemList?.forEach((element) {
+        if (element.id == chat.id) {
+          if (chatController.pagingController?.itemList?.remove(element) ==
+              true) {
+            chat.lastMessage = response.message;
+            chatController.pagingController?.itemList?.insert(0, chat);
+            chatController.pagingController?.appendLastPage([]);
+          }
+        }
+      });
+
       messageController.clear();
       message('');
       showEmoji(false);
-      shouldRefresh = true;
     } catch (e) {
       AppWidget.openSnackbar(
         'Oops! Something went wrong',
@@ -197,6 +215,67 @@ class ChatroomController extends GetxController with StateMixin {
         break;
       default:
         break;
+    }
+  }
+
+  void listenChat(Chat chat) {
+    EchoService.instance.private('chat.${chat.id}').listen('.message.sent',
+        (e) {
+      if (e != null) {
+        _onMessageReceived(jsonDecode(e));
+      }
+    }).error(
+      (error) {
+        log(error.toString());
+      },
+    );
+  }
+
+  void disconnectChat(Chat chat) {
+    EchoService.instance.leave('chat.${chat.id}');
+    EchoService.instance.disconnect();
+  }
+
+  void _onMessageReceived(Map<String, dynamic> data) {
+    final Message message = Message.fromJson(data['message']);
+    if (data['chat_id'] == chat.id) {
+      // Dont add to appendLastPage directly
+      // It will causing the new message at the top of screen, not bottom
+      pagingController?.itemList?.insert(0, message);
+      pagingController?.appendLastPage([]);
+
+      chatController.pagingController?.itemList?.forEach((element) {
+        if (element.id == data['chat_id']) {
+          if (chatController.pagingController?.itemList?.remove(element) ==
+              true) {
+            chat.lastMessage = message;
+            chatController.pagingController?.itemList?.insert(0, chat);
+            chatController.pagingController?.appendLastPage([]);
+          }
+        }
+      });
+    }
+  }
+
+  Future<void> initEcho() async {
+    final token = await localRepository.get(
+      LocalRepositoryKey.TOKEN,
+      '',
+    );
+
+    if (token.isEmpty) {
+      return;
+    }
+
+    EchoService.init(token);
+    listenChat(chat);
+  }
+
+  Future<void> readMessages() async {
+    try {
+      await messageRepository.readMessages(chat.id!);
+    } catch (e) {
+      rethrow;
     }
   }
 }

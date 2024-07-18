@@ -6,6 +6,7 @@ class User {
   String? gender;
   String? photoURL;
   DateTime? emailVerifiedAt;
+  DateTime? lastActive;
   DateTime? createdAt;
   DateTime? updatedAt;
   bool? isAdmin;
@@ -19,6 +20,7 @@ class User {
     this.photoURL,
     this.isAdmin,
     this.emailVerifiedAt,
+    this.lastActive,
     this.createdAt,
     this.updatedAt,
   });
@@ -33,6 +35,7 @@ class User {
       photoURL: json['photo_url'],
       isAdmin: json['is_admin'],
       emailVerifiedAt: DateTime.tryParse(json['email_verified_at'] ?? ''),
+      lastActive: DateTime.tryParse(json['last_active'] ?? ''),
       createdAt: DateTime.tryParse(json['created_at'] ?? ''),
       updatedAt: DateTime.tryParse(json['updated_at'] ?? ''),
     );
@@ -48,6 +51,7 @@ class User {
       'photo_url': photoURL,
       'is_admin': isAdmin,
       'email_verified_at': emailVerifiedAt?.toIso8601String(),
+      'last_active': lastActive?.toIso8601String(),
       'created_at': createdAt?.toIso8601String(),
       'updated_at': updatedAt?.toIso8601String(),
     };

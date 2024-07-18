@@ -7,7 +7,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:intl/intl.dart';
 import 'package:keyboard_detection/keyboard_detection.dart';
@@ -98,14 +97,38 @@ class ChatroomScreen extends GetView<ChatroomController> {
                       ),
                     ),
                     const SizedBox(height: 6),
-                    const Text(
-                      'Online',
-                      style: TextStyle(
-                        color: Color(0xFF65CF53),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        fontFamily: 'SF Pro Display',
-                      ),
+                    Obx(
+                      () {
+                        if (controller.other.value.lastActive != null &&
+                            controller.other.value.lastActive!.isAfter(
+                              DateTime.now().subtract(5.minutes),
+                            )) {
+                          return const Text(
+                            'Online',
+                            style: TextStyle(
+                              color: Color(0xFF65CF53),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: 'SF Pro Display',
+                            ),
+                          );
+                        }
+
+                        return Text(
+                          controller.other.value.lastActive != null
+                              ? 'Last seen ${DateFormat.jm().format(
+                                    controller.other.value.lastActive!
+                                        .toLocal(),
+                                  ).toLowerCase()}'
+                              : 'Last seen a long time ago',
+                          style: const TextStyle(
+                            color: AppColor.baseWhiteColor,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            fontFamily: 'SF Pro Display',
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -179,9 +202,9 @@ class ChatroomScreen extends GetView<ChatroomController> {
                         return Column(
                           children: [
                             Text(
-                              DateFormat.Hm().format(
-                                message.updatedAt!.toLocal(),
-                              ),
+                              DateFormat.jm()
+                                  .format(message.updatedAt!.toLocal())
+                                  .toLowerCase(),
                               style: const TextStyle(
                                 color: Color(0xFF979393),
                                 fontSize: 14,
@@ -338,9 +361,9 @@ class ChatroomScreen extends GetView<ChatroomController> {
                             ),
                             const SizedBox(height: 10),
                             Text(
-                              DateFormat.Hm().format(
-                                message.updatedAt!.toLocal(),
-                              ),
+                              DateFormat.jm()
+                                  .format(message.updatedAt!.toLocal())
+                                  .toLowerCase(),
                               style: const TextStyle(
                                 color: Color(0xFF979393),
                                 fontSize: 14,
@@ -360,7 +383,6 @@ class ChatroomScreen extends GetView<ChatroomController> {
                     newPageProgressIndicatorBuilder: (context) {
                       return AppWidget.getLoadingIndicator(
                         color: AppColor.primaryColor,
-                        alignment: Alignment.topCenter,
                       );
                     },
                   ),

@@ -102,7 +102,6 @@ class ChatFindController extends GetxController with StateMixin<List<User>> {
           'chat': response.chat,
         },
       );
-      chatController.getChats();
     } catch (e) {
       AppWidget.openSnackbar(
         "Oops! Something went wrong",
