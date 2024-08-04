@@ -49,6 +49,16 @@ class Main extends StatelessWidget {
             enableFeedback: true,
           ),
         ),
+        appBarTheme: const AppBarTheme(
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          iconTheme: IconThemeData(
+            color: AppColor.primaryBlackColor,
+          ),
+          actionsIconTheme: IconThemeData(
+            color: AppColor.primaryBlackColor,
+          ),
+        ),
         inputDecorationTheme: InputDecorationTheme(
           errorStyle: TextStyle(
             color: AppColor.errorColor,

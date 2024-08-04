@@ -10,6 +10,7 @@ import '../../../data/dto/user.response.dart';
 import '../../../domain/case/auth/csrf_cookie.case.dart';
 import '../../../domain/case/auth/login_google.case.dart';
 import '../../../infrastructure/constant.dart';
+import '../../../infrastructure/navigation/routes.dart';
 import '../../../infrastructure/theme/app.widget.dart';
 
 class WelcomeController extends BaseController {
@@ -90,10 +91,8 @@ class WelcomeController extends BaseController {
         true,
       );
 
-      Get.offAllNamed('/home');
-    } catch (e, stackTrace) {
-      print(e);
-      print(stackTrace);
+      Get.offAllNamed(Routes.HOME);
+    } catch (e) {
       String message = 'An error occurred on our end while logging.';
       if (e is DioException) {
         message = e.response?.data['meta']['messages'] != null &&

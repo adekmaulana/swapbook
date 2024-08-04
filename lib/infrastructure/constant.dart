@@ -48,6 +48,7 @@ class AppUrl {
 
   // Users
   static const String users = '/users';
+  static const String user = '/user';
 
   // Messages
   static const String messages = '/messages';

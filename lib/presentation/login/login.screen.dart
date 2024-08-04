@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
 
+import '../../infrastructure/navigation/routes.dart';
 import '../../infrastructure/theme/app.color.dart';
 import '../../infrastructure/theme/app.widget.dart';
 import 'controllers/login.controller.dart';
@@ -14,11 +16,25 @@ class LoginScreen extends GetView<LoginController> {
     return Scaffold(
       backgroundColor: AppColor.primaryColor,
       extendBody: true,
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.light,
+          statusBarBrightness: Brightness.dark,
+          systemNavigationBarColor: Colors.transparent,
+          systemNavigationBarIconBrightness: Brightness.dark,
+        ),
+        automaticallyImplyLeading: false,
+      ),
       body: GetBuilder(
           init: controller,
           builder: (_) {
             return BaseView(
               isLoading: controller.isLoading,
+              loadingColor: AppColor.secondaryColor,
               child: SingleChildScrollView(
                 physics: const ClampingScrollPhysics(),
                 child: LayoutBuilder(
@@ -400,7 +416,7 @@ class LoginScreen extends GetView<LoginController> {
                                       alignment: Alignment.centerRight,
                                       child: InkWell(
                                         onTap: () {
-                                          Get.toNamed('/login/forgot-pass');
+                                          Get.toNamed(Routes.FORGOT_PASS);
                                         },
                                         child: const Text(
                                           'Forgot your password?',
@@ -450,7 +466,7 @@ class LoginScreen extends GetView<LoginController> {
                                         ),
                                         InkWell(
                                           onTap: () {
-                                            Get.toNamed('/register');
+                                            Get.toNamed(Routes.REGISTER);
                                           },
                                           child: Text(
                                             'Sign Up',

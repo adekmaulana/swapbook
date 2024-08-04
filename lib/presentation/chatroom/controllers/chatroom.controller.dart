@@ -8,28 +8,30 @@ import 'package:keyboard_detection/keyboard_detection.dart';
 
 import '../../../data/models/chat.model.dart';
 import '../../../data/models/message.model.dart';
-import '../../../data/models/participant.model.dart';
 import '../../../data/models/user.model.dart';
+import '../../../data/repositories/chat.repository.dart';
 import '../../../data/repositories/local.repository.dart';
 import '../../../data/repositories/message.repository.dart';
 import '../../../infrastructure/constant.dart';
 import '../../../infrastructure/services/pusher.service.dart';
 import '../../../infrastructure/theme/app.widget.dart';
 import '../../chat/controllers/chat.controller.dart';
+import '../../home/controllers/home.controller.dart';
 
 class ChatroomController extends GetxController with StateMixin {
   TextEditingController messageController = TextEditingController();
   LocalRepository localRepository = Get.find<LocalRepository>();
+  ChatRepository chatRepository = ChatRepository();
   MessageRepository messageRepository = MessageRepository();
   PagingController<int, Message>? pagingController;
   ChatController chatController = Get.find<ChatController>();
+  HomeController homeController = Get.find<HomeController>();
 
   RxString chatInitial = ''.obs;
   RxString chatName = ''.obs;
   RxString message = ''.obs;
   RxBool sending = false.obs;
-  Rx<User> self = User().obs;
-  Rx<User> other = User().obs;
+  Rx<User> user = User().obs;
   RxList<Message> messages = <Message>[].obs;
   RxBool showEmoji = false.obs;
   RxBool isOnline = false.obs;
@@ -40,16 +42,35 @@ class ChatroomController extends GetxController with StateMixin {
     messageController.addListener(() {
       message(messageController.text);
     });
-
-    Map<String, dynamic> args = Get.arguments as Map<String, dynamic>;
-    chat = args['chat'] as Chat;
-
     pagingController = PagingController<int, Message>(
       firstPageKey: 1,
     );
     pagingController?.addPageRequestListener((pageKey) {
       _fetchMessages(pageKey, 10);
     });
+
+    Map<String, dynamic> args = Get.arguments as Map<String, dynamic>;
+    bool isFromNotification = args['is_from_notification'] ?? false;
+    chat = args['chat'] as Chat;
+    if (isFromNotification) {
+      final response = await chatRepository.getChat(chat.id!);
+      if (response.meta!.code != 200) {
+        pagingController?.error = response.meta!.messages!.first;
+        return;
+      }
+
+      chat = response.chat!;
+      user.value = chat.participants!
+          .firstWhere(
+            (element) => element.user!.id != homeController.user.value.id,
+          )
+          .user!;
+    } else {
+      user.value = args['user'] as User;
+    }
+
+    homeController.selectedChat = chat;
+    user.refresh();
 
     await init();
     await readMessages();
@@ -66,6 +87,8 @@ class ChatroomController extends GetxController with StateMixin {
     disconnectChat(chat);
     messageController.dispose();
     pagingController?.dispose();
+    homeController.selectedChat = null;
+    chatController.pagingController?.refresh();
 
     super.onClose();
   }
@@ -73,46 +96,8 @@ class ChatroomController extends GetxController with StateMixin {
   Future<void> init() async {
     change(null, status: RxStatus.loading());
     try {
-      self.value = User.fromJson(
-        jsonDecode(
-          await localRepository.get(
-            LocalRepositoryKey.USER,
-            '{}',
-          ),
-        ),
-      );
-      self.refresh();
-
-      for (Participant participant in chat.participants ?? []) {
-        if (participant.userId == self.value.id) {
-          self.value = participant.user!;
-          self.refresh();
-        } else {
-          other.value = participant.user!;
-          other.refresh();
-        }
-      }
-
-      chatName.value = other.value.name!;
-      chatInitial.value = chatName
-          .split(' ')
-          .map(
-            (word) => word[0],
-          )
-          .join('');
-
       await initEcho();
-      chatController.pagingController?.itemList?.forEach((element) {
-        if (element.id == chat.id) {
-          int index =
-              chatController.pagingController?.itemList?.indexOf(element) ?? 0;
-          if (chatController.pagingController?.itemList?.remove(element) ==
-              true) {
-            chatController.pagingController?.itemList?.insert(index, chat);
-            chatController.pagingController?.appendLastPage([]);
-          }
-        }
-      });
+      chatController.pagingController?.refresh();
       change(null, status: RxStatus.success());
     } catch (e) {
       change(null, status: RxStatus.error(e.toString()));
@@ -164,25 +149,20 @@ class ChatroomController extends GetxController with StateMixin {
         EchoService.instance.socketId,
       );
 
+      messageController.clear();
+      message('');
+      showEmoji(false);
+
       // Dont add to appendLastPage directly
       // It will causing the new message at the top of screen, not bottom
       pagingController?.itemList?.insert(0, response.message!);
       pagingController?.appendLastPage([]);
 
-      chatController.pagingController?.itemList?.forEach((element) {
-        if (element.id == chat.id) {
-          if (chatController.pagingController?.itemList?.remove(element) ==
-              true) {
-            chat.lastMessage = response.message;
-            chatController.pagingController?.itemList?.insert(0, chat);
-            chatController.pagingController?.appendLastPage([]);
-          }
-        }
-      });
+      // Update last message in chat list
+      chatController.pagingController?.refresh();
 
-      messageController.clear();
-      message('');
-      showEmoji(false);
+      homeController.user.value = response.message!.user!;
+      homeController.user.refresh();
     } catch (e) {
       AppWidget.openSnackbar(
         'Oops! Something went wrong',
@@ -233,27 +213,20 @@ class ChatroomController extends GetxController with StateMixin {
 
   void disconnectChat(Chat chat) {
     EchoService.instance.leave('chat.${chat.id}');
-    EchoService.instance.disconnect();
   }
 
   void _onMessageReceived(Map<String, dynamic> data) {
     final Message message = Message.fromJson(data['message']);
+    user(message.user!);
+    user.refresh();
     if (data['chat_id'] == chat.id) {
       // Dont add to appendLastPage directly
       // It will causing the new message at the top of screen, not bottom
       pagingController?.itemList?.insert(0, message);
       pagingController?.appendLastPage([]);
 
-      chatController.pagingController?.itemList?.forEach((element) {
-        if (element.id == data['chat_id']) {
-          if (chatController.pagingController?.itemList?.remove(element) ==
-              true) {
-            chat.lastMessage = message;
-            chatController.pagingController?.itemList?.insert(0, chat);
-            chatController.pagingController?.appendLastPage([]);
-          }
-        }
-      });
+      // Update last message in chat list
+      chatController.pagingController?.refresh();
     }
   }
 
@@ -268,12 +241,19 @@ class ChatroomController extends GetxController with StateMixin {
     }
 
     EchoService.init(token);
+    // final pusher = await PusherService.initialize(token);
+    // await pusher.client.subscribe(
+    //   channelName: 'private-chat.${chat.id}',
+    // );
+    // await pusher.client.connect();
     listenChat(chat);
   }
 
   Future<void> readMessages() async {
     try {
       await messageRepository.readMessages(chat.id!);
+      // Update last message in chat list
+      chatController.pagingController?.refresh();
     } catch (e) {
       rethrow;
     }

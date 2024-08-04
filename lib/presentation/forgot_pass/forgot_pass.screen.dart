@@ -38,7 +38,13 @@ class ForgotPassScreen extends GetView<ForgotPassController> {
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
-          systemOverlayStyle: SystemUiOverlayStyle.dark,
+          systemOverlayStyle: const SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.dark,
+            statusBarBrightness: Brightness.light,
+            systemNavigationBarColor: AppColor.backgroundColor,
+            systemNavigationBarIconBrightness: Brightness.dark,
+          ),
           title: const Text(
             'Forgot Password',
             style: TextStyle(

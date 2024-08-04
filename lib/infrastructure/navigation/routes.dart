@@ -24,6 +24,8 @@ class Routes {
   static const BOOKMARKS = '/bookmarks';
   static const CHAT = '/chat';
   static const CHAT_FIND = '/chat-find';
+  static const CHAT_ROOM = '/chat-room';
+  static const EDIT_PROFILE = '/edit-profile';
   static const FORGOT_PASS = '/forgot-pass';
   static const HOME = '/home';
   static const KATALOG = '/katalog';
@@ -32,5 +34,5 @@ class Routes {
   static const REGISTER = '/register';
   static const SEARCH = '/search';
   static const WELCOME = '/welcome';
-  static const CHAT_ROOM = '/chat-room';
+  static const POST = '/post';
 }

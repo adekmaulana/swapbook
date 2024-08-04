@@ -1,10 +1,13 @@
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import 'app.color.dart';
 
@@ -22,6 +25,11 @@ class AppWidget {
     'success': AppColor.baseBlackColor,
     'warning': AppColor.baseBlackColor,
   };
+
+  static final List<String> _defaultImage = [
+    'assets/images/avatar-man.png',
+    'assets/images/avatar-woman.png',
+  ];
 
   static SnackbarController openSnackbar(
     String title,
@@ -111,66 +119,23 @@ class AppWidget {
   static Widget getLoadingIndicator({
     Color? color,
     double sizeIOS = 10.0,
-    double sizeAndroid = 12.0,
+    double sizeAndroid = 16.0,
   }) {
-    return SizedBox(
-      child: Platform.isIOS
-          ? CupertinoActivityIndicator(
-              color: color ?? AppColor.secondaryColor,
-              radius: sizeIOS,
-            )
-          : SizedBox(
-              height: sizeAndroid,
-              width: sizeAndroid,
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  color ?? AppColor.secondaryColor,
-                ),
-                strokeWidth: 2.0,
+    return Platform.isIOS
+        ? CupertinoActivityIndicator(
+            color: color ?? AppColor.secondaryColor,
+            radius: sizeIOS,
+          )
+        : SizedBox(
+            width: sizeAndroid,
+            height: sizeAndroid,
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(
+                color ?? AppColor.secondaryColor,
               ),
+              strokeWidth: 2.0,
             ),
-    );
-  }
-
-  static Future<void> showNotification(
-    int notificationId,
-    String notificationTitle,
-    String notificationContent,
-    String payload, {
-    String channelId = 'high_importance_channel',
-    String channelTitle = 'Main Leads Notifications',
-    String channelDescription = 'Default push notifications.',
-    Priority notificationPriority = Priority.high,
-    Importance notificationImportance = Importance.max,
-  }) async {
-    final androidPlatformChannelSpecifics = AndroidNotificationDetails(
-      channelId,
-      channelTitle,
-      channelDescription: channelDescription,
-      playSound: true,
-      importance: notificationImportance,
-      priority: notificationPriority,
-      icon: 'launcher_notification',
-      ticker: 'ticker',
-    );
-    const iOSPlatformChannelSpecifics = DarwinNotificationDetails(
-      presentAlert: true,
-      presentBadge: true,
-      presentSound: true,
-      presentBanner: true,
-      sound: '',
-    );
-    final platformChannelSpecifics = NotificationDetails(
-      android: androidPlatformChannelSpecifics,
-      iOS: iOSPlatformChannelSpecifics,
-    );
-    await FlutterLocalNotificationsPlugin().show(
-      notificationId,
-      notificationTitle,
-      notificationContent,
-      platformChannelSpecifics,
-      payload: payload,
-    );
+          );
   }
 
   static Future<T?> showBottomSheet<T>({
@@ -221,6 +186,144 @@ class AppWidget {
       ),
     );
   }
+
+  static Future<bool> getPermissionAwareDialog() async {
+    PermissionStatus status = await Permission.notification.status;
+
+    if (status.isDenied) {
+      status = await Permission.notification.request();
+      if (status.isGranted || status.isProvisional) {
+        await OneSignal.consentGiven(status.isGranted || status.isProvisional);
+        return true;
+      }
+    }
+
+    if (status.isPermanentlyDenied || status.isRestricted) {
+      await OneSignal.consentGiven(false);
+      return await Get.dialog(
+        AlertDialog(
+          backgroundColor: AppColor.backgroundColor,
+          icon: Icon(
+            Icons.notifications_on_rounded,
+            color: AppColor.secondaryColor,
+          ),
+          title: const Text(
+            'Allow “SwapBook” to send you notification',
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 17,
+              color: AppColor.primaryBlackColor,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          content: const Text(
+            'If you ever denied notifications prompt before, to turn on notifications again just visit the app settings.',
+            style: TextStyle(
+              fontSize: 14,
+              color: AppColor.primaryBlackColor,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: [
+            TextButton(
+              onPressed: () {
+                Get.back(result: false);
+              },
+              child: SizedBox(
+                width: Get.mediaQuery.size.width * 0.2,
+                child: Text(
+                  'Skip',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: AppColor.primaryColor,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () async {
+                await openAppSettings();
+                Get.back(result: false);
+              },
+              child: SizedBox(
+                width: Get.mediaQuery.size.width * 0.2,
+                child: Text(
+                  'Setting',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: AppColor.secondaryColor,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          ],
+        ),
+        barrierDismissible: false,
+      );
+    }
+
+    return true;
+  }
+
+  static Widget imageBuilder({
+    String? imageURL,
+    String? gender,
+  }) {
+    return CachedNetworkImage(
+      imageUrl: imageURL ?? '',
+      imageBuilder: (context, imageProvider) => InkWell(
+        onLongPress: () {
+          showImageViewer(
+            context,
+            imageProvider,
+            swipeDismissible: true,
+            doubleTapZoomable: true,
+            useSafeArea: true,
+            backgroundColor: Colors.transparent,
+            closeButtonColor: AppColor.primaryBlackColor,
+          );
+        },
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+        customBorder: const CircleBorder(),
+        child: Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            image: DecorationImage(
+              image: imageProvider,
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+      ),
+      placeholder: (context, url) => getLoadingIndicator(
+        color: AppColor.primaryColor,
+      ),
+      errorWidget: (context, url, error) => defaultImageBuilder(
+        gender: gender,
+      ),
+    );
+  }
+
+  static Widget defaultImageBuilder({
+    String? gender,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: AppColor.backgroundImageColor2,
+        image: DecorationImage(
+          image: AssetImage(_defaultImage[0]),
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
+  }
 }
 
 class BaseView extends StatelessWidget {
@@ -228,44 +331,50 @@ class BaseView extends StatelessWidget {
     super.key,
     required this.isLoading,
     required this.child,
+    this.loadingColor,
+    this.isSafeArea = false,
   });
 
   final bool isLoading;
   final Widget child;
+  final Color? loadingColor;
+  final bool isSafeArea;
 
   @override
   Widget build(BuildContext context) {
     return AbsorbPointer(
       absorbing: isLoading,
-      child: SizedBox(
-        width: double.infinity,
-        height: double.infinity,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            child,
-            if (isLoading)
-              BackdropFilter(
-                filter: ImageFilter.blur(
-                  sigmaX: 2.0,
-                  sigmaY: 2.0,
-                ),
-                child: Container(
-                  color: Colors.transparent,
-                ),
+      child: isSafeArea
+          ? SafeArea(
+              child: _buildBaseView(),
+            )
+          : _buildBaseView(),
+    );
+  }
+
+  SizedBox _buildBaseView() {
+    return SizedBox(
+      width: double.infinity,
+      height: double.infinity,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          child,
+          if (isLoading)
+            BackdropFilter(
+              filter: ImageFilter.blur(
+                sigmaX: 2.0,
+                sigmaY: 2.0,
               ),
-            if (isLoading)
-              Positioned(
-                top: 0,
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: AppWidget.getLoadingIndicator(
-                  color: AppColor.secondaryColor,
-                ),
+              child: Container(
+                color: Colors.transparent,
               ),
-          ],
-        ),
+            ),
+          if (isLoading)
+            AppWidget.getLoadingIndicator(
+              color: loadingColor ?? AppColor.primaryColor,
+            ),
+        ],
       ),
     );
   }

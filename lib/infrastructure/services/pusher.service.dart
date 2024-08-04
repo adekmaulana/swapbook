@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:laravel_echo_null/laravel_echo_null.dart';
 import 'package:pusher_channels_flutter/pusher_channels_flutter.dart';
 
-import '../../data/dto/pusher_auth.response.dart';
 import '../../data/repositories/pusher.repository.dart';
 
 class PusherConfig {
@@ -50,48 +49,51 @@ class PusherConfig {
 }
 
 class PusherService extends GetxService {
-  static final PusherService instance = PusherService._();
-  PusherService._();
+  static PusherService? _singleton;
+  final String token;
 
-  final PusherChannelsFlutter pusher = PusherChannelsFlutter();
+  PusherService._({required this.token});
+
+  final PusherChannelsFlutter client = PusherChannelsFlutter();
   final PusherRepository pusherRepository = PusherRepository();
 
-  final _config = PusherConfig.init();
+  final config = PusherConfig.init();
 
-  Future<void> init() async {
-    try {
-      await pusher.init(
-        apiKey: _config.key!,
-        cluster: _config.cluster!,
-        onAuthorizer: onAuth,
-      );
-    } catch (e, s) {
-      log(e.toString());
-      log(s.toString());
+  factory PusherService.init(String token) {
+    if (_singleton == null || _singleton?.token != token) {
+      _singleton = PusherService._(token: token);
     }
+    return _singleton!;
   }
 
-  Future<PusherAuthResponse?> onAuth(
-    String channelName,
-    String socketId,
-    dynamic options,
-  ) async {
-    final response = await pusherRepository.authenticate(
-      socketId: socketId,
-      channelName: channelName,
-      endPoint: _config.hostAuthEndPoint,
-    );
-
-    return response;
-  }
-
-  Future<void> subscribeChat(int chatId) async {
-    await pusher.subscribe(
-      channelName: 'chat.$chatId',
-      onEvent: (event) {
-        log('Event: $event');
+  static Future<PusherService> initialize(String token) async {
+    final service = PusherService.init(token);
+    await service.client.init(
+      apiKey: service.config.key!,
+      cluster: service.config.cluster!,
+      authParams: {
+        'headers': {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        }
       },
+      onAuthorizer: (channelName, socketId, options) async {
+        final response = await service.pusherRepository.authenticate(
+          token: token,
+          socketId: socketId,
+          channelName: channelName,
+          endPoint: service.config.hostAuthEndPoint,
+        );
+        return response.auth!;
+      },
+      onSubscriptionSucceeded: (channelName, data) {
+        log('Subscribed to $channelName');
+      },
+      logToConsole: true,
     );
+
+    return service;
   }
 
   static const String connected = 'CONNECTED';

@@ -71,5 +71,15 @@ class Nav {
       page: () => const ChatroomScreen(),
       binding: ChatroomControllerBinding(),
     ),
+    GetPage(
+      name: Routes.EDIT_PROFILE,
+      page: () => const EditProfileScreen(),
+      binding: EditProfileControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.POST,
+      page: () => const PostScreen(),
+      binding: PostControllerBinding(),
+    ),
   ];
 }

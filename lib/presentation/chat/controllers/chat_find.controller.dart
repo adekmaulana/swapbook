@@ -6,11 +6,13 @@ import '../../../data/models/user.model.dart';
 import '../../../data/repositories/search.repository.dart';
 import '../../../domain/case/chat/create_chat.case.dart';
 import '../../../infrastructure/navigation/routes.dart';
+import '../../home/controllers/home.controller.dart';
 import 'chat.controller.dart';
 
 class ChatFindController extends GetxController with StateMixin<List<User>> {
   TextEditingController searchController = TextEditingController();
   ChatController chatController = Get.find<ChatController>();
+  HomeController homeController = Get.find<HomeController>();
 
   RxString search = ''.obs;
 
@@ -100,6 +102,11 @@ class ChatFindController extends GetxController with StateMixin<List<User>> {
         Routes.CHAT_ROOM,
         arguments: {
           'chat': response.chat,
+          'user': response.chat!.participants!
+              .firstWhere(
+                (element) => element.user!.id != chatController.self.value.id,
+              )
+              .user,
         },
       );
     } catch (e) {

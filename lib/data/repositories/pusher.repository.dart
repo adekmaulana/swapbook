@@ -10,6 +10,7 @@ class PusherRepository implements IPusherRepository {
 
   @override
   Future<PusherAuthResponse> authenticate({
+    required String token,
     required String socketId,
     required String channelName,
     required String endPoint,
@@ -18,10 +19,15 @@ class PusherRepository implements IPusherRepository {
       endPoint,
       options: Options(
         headers: {
+          'Authorization': 'Bearer $token',
           'socket_id': socketId,
           'channel_name': channelName,
         },
       ),
+      queryParameters: {
+        'socket_id': socketId,
+        'channel_name': channelName,
+      },
       data: {
         'socket_id': socketId,
         'channel_name': channelName,

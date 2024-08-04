@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -9,13 +7,14 @@ import '../../../data/models/chat.model.dart';
 import '../../../data/models/user.model.dart';
 import '../../../data/repositories/chat.repository.dart';
 import '../../../data/repositories/local.repository.dart';
-import '../../../infrastructure/constant.dart';
 import '../../../infrastructure/navigation/routes.dart';
 import '../../../infrastructure/theme/app.widget.dart';
+import '../../home/controllers/home.controller.dart';
 import '../chat_find.screen.dart';
 
 class ChatController extends GetxController with StateMixin<List<Chat>> {
   LocalRepository localRepository = Get.find<LocalRepository>();
+  HomeController homeController = Get.find<HomeController>();
   RefreshController refreshController = RefreshController(
     initialRefresh: false,
   );
@@ -35,16 +34,7 @@ class ChatController extends GetxController with StateMixin<List<Chat>> {
       getChats(pageKey, 10);
     });
 
-    self.value = User.fromJson(
-      jsonDecode(
-        await localRepository.get(
-          LocalRepositoryKey.USER,
-          '{}',
-        ),
-      ),
-    );
-    self.refresh();
-
+    self = homeController.user;
     super.onInit();
   }
 

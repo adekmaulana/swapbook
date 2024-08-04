@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
 
+import '../../infrastructure/navigation/routes.dart';
 import '../../infrastructure/theme/app.color.dart';
 import '../../infrastructure/theme/app.widget.dart';
 import 'controllers/register.controller.dart';
@@ -14,11 +16,25 @@ class RegisterScreen extends GetView<RegisterController> {
     return Scaffold(
       backgroundColor: AppColor.primaryColor,
       extendBody: true,
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.light,
+          statusBarBrightness: Brightness.dark,
+          systemNavigationBarColor: Colors.transparent,
+          systemNavigationBarIconBrightness: Brightness.dark,
+        ),
+        automaticallyImplyLeading: false,
+      ),
       body: GetBuilder(
           init: controller,
           builder: (_) {
             return BaseView(
               isLoading: controller.isLoading,
+              loadingColor: AppColor.secondaryColor,
               child: SingleChildScrollView(
                 physics: const ClampingScrollPhysics(),
                 child: LayoutBuilder(
@@ -173,10 +189,11 @@ class RegisterScreen extends GetView<RegisterController> {
                                         splashColor: Colors.transparent,
                                         highlightColor: Colors.transparent,
                                         onTap: () {
-                                          if (Get.previousRoute == '/login') {
+                                          if (Get.previousRoute ==
+                                              Routes.LOGIN) {
                                             Get.back();
                                           } else {
-                                            Get.offNamed('/login');
+                                            Get.offNamed(Routes.LOGIN);
                                           }
                                         },
                                         child: Text(

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
 
+import '../../infrastructure/navigation/routes.dart';
 import '../../infrastructure/theme/app.color.dart';
 import '../../infrastructure/theme/app.widget.dart';
 import 'controllers/welcome.controller.dart';
@@ -13,12 +15,26 @@ class WelcomeScreen extends GetView<WelcomeController> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
+      extendBodyBehindAppBar: true,
       backgroundColor: AppColor.primaryColor,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.light,
+          statusBarBrightness: Brightness.dark,
+          systemNavigationBarColor: Colors.transparent,
+          systemNavigationBarIconBrightness: Brightness.dark,
+        ),
+        automaticallyImplyLeading: false,
+      ),
       body: GetBuilder(
           init: controller,
           builder: (_) {
             return BaseView(
               isLoading: controller.isLoading,
+              loadingColor: AppColor.secondaryColor,
               child: Stack(
                 fit: StackFit.expand,
                 children: [
@@ -134,7 +150,7 @@ class WelcomeScreen extends GetView<WelcomeController> {
                             height: 52,
                             child: MaterialButton(
                               onPressed: () {
-                                Get.toNamed('/register');
+                                Get.toNamed(Routes.REGISTER);
                               },
                               color: AppColor.secondaryColor,
                               splashColor: Colors.transparent,
@@ -202,7 +218,7 @@ class WelcomeScreen extends GetView<WelcomeController> {
                               const SizedBox(height: 8),
                               GestureDetector(
                                 onTap: () {
-                                  Get.toNamed('/login');
+                                  Get.toNamed(Routes.LOGIN);
                                 },
                                 child: Text(
                                   'Sign in',

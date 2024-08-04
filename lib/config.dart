@@ -1,3 +1,5 @@
+import 'dart:io';
+
 class Environments {
   static const String PRODUCTION = 'prod';
   static const String DEV = 'dev';
@@ -8,11 +10,15 @@ class ConfigEnvironments {
   static final List<Map<String, String>> _availableEnvironments = [
     {
       'env': Environments.DEV,
-      'url': 'http://127.0.0.1:8000/api/v1',
+      'url': Platform.isIOS
+          ? 'http://localhost:8000/api/v1'
+          : 'http://10.0.2.2:8000/api/v1',
     },
     {
       'env': Environments.PRODUCTION,
-      'url': 'http://127.0.0.1:8000/api/v1',
+      'url': Platform.isIOS
+          ? 'http://localhost:8000/api/v1'
+          : 'http://10.0.2.2:8000/api/v1',
     },
   ];
 

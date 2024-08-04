@@ -5,6 +5,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:swapbook/presentation/home/wrapper.home.screen.dart';
 
+import '../../infrastructure/navigation/routes.dart';
+import '../../infrastructure/theme/app.color.dart';
 import 'controllers/katalog.controller.dart';
 
 class KatalogScreen extends GetView<KatalogController> {
@@ -39,7 +41,9 @@ class KatalogScreen extends GetView<KatalogController> {
               const Spacer(),
               SizedBox(
                 child: IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Get.toNamed(Routes.POST);
+                  },
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                   style: const ButtonStyle(
@@ -84,7 +88,13 @@ class KatalogScreen extends GetView<KatalogController> {
               ),
             ],
           ),
-          systemOverlayStyle: SystemUiOverlayStyle.dark,
+          systemOverlayStyle: const SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.dark,
+            statusBarBrightness: Brightness.light,
+            systemNavigationBarColor: AppColor.backgroundColor,
+            systemNavigationBarIconBrightness: Brightness.dark,
+          ),
           automaticallyImplyLeading: false,
         ),
         body: const Center(

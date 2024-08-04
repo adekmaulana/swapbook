@@ -101,6 +101,8 @@ class AppColor {
 
   static const Color greyTextColor = Color(0xFF4F4F4F);
   static const Color backgroundColor = Color(0xFFFFF9E9);
+  static const Color backgroundImageColor1 = Color(0xFFFABCA6);
+  static const Color backgroundImageColor2 = Color(0xFFB4D1C4);
 
   static MaterialColor successColor = const MaterialColor(
     _primarySuccessValue,

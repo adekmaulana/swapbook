@@ -3,7 +3,9 @@ import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
 
+import '../../infrastructure/navigation/routes.dart';
 import '../../infrastructure/theme/app.color.dart';
+import '../../infrastructure/theme/app.widget.dart';
 import 'controllers/home.controller.dart';
 
 class HomeScreen extends GetView<HomeController> {
@@ -15,6 +17,7 @@ class HomeScreen extends GetView<HomeController> {
       key: controller.scaffoldKey,
       resizeToAvoidBottomInset: true,
       extendBody: true,
+      backgroundColor: AppColor.backgroundColor,
       drawer: Drawer(
         width: Get.width * 0.55,
         backgroundColor: AppColor.backgroundColor,
@@ -29,33 +32,51 @@ class HomeScreen extends GetView<HomeController> {
               SizedBox(
                 height: AppBar().preferredSize.height,
                 width: double.infinity,
-                child: const Row(
+                child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     SizedBox(
                       width: 50,
                       height: 50,
-                      child: CircleAvatar(),
+                      child: Obx(
+                        () => AppWidget.imageBuilder(
+                          imageURL: controller.user.value.photoURL,
+                          gender: controller.user.value.gender,
+                        ),
+                      ),
                     ),
-                    SizedBox(width: 12),
+                    const SizedBox(width: 12),
                     Expanded(
-                      child: Wrap(
-                        alignment: WrapAlignment.start,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            'Vanessa',
-                            style: TextStyle(
-                              color: AppColor.primaryBlackColor,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Obx(
+                              () => Text(
+                                controller.user.value.name ?? '',
+                                style: const TextStyle(
+                                  color: AppColor.primaryBlackColor,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                             ),
                           ),
-                          Text(
-                            'vanessa31',
-                            style: TextStyle(
-                              color: AppColor.borderColor,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Obx(
+                              () => Text(
+                                controller.user.value.isAdmin == true
+                                    ? 'Admin'
+                                    : 'User',
+                                style: const TextStyle(
+                                  color: AppColor.borderColor,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
                             ),
                           ),
                         ],
@@ -66,7 +87,11 @@ class HomeScreen extends GetView<HomeController> {
               ),
               const Spacer(),
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  Get.toNamed(
+                    Routes.EDIT_PROFILE,
+                  );
+                },
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(),
                 style: const ButtonStyle(
@@ -146,80 +171,104 @@ class HomeScreen extends GetView<HomeController> {
             elevation: 0,
           ),
         ),
-        child: Container(
-          decoration: BoxDecoration(
-            color: AppColor.primaryColor,
-            borderRadius: const BorderRadius.only(
-              topRight: Radius.circular(80),
-              topLeft: Radius.circular(80),
-              bottomLeft: Radius.circular(40),
-              bottomRight: Radius.circular(40),
-            ),
-          ),
-          child: ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topRight: Radius.circular(80),
-              topLeft: Radius.circular(80),
-              bottomLeft: Radius.circular(40),
-              bottomRight: Radius.circular(40),
-            ),
-            child: BottomAppBar(
-              clipBehavior: Clip.antiAlias,
-              height: 93 - Get.mediaQuery.viewPadding.bottom,
-              elevation: 0,
-              padding: const EdgeInsets.only(
-                left: 32,
-                right: 32,
-                top: 18.5,
+        child: Obx(
+          () {
+            if (controller.onLoad()) {
+              return const SizedBox.shrink();
+            }
+
+            return Container(
+              decoration: BoxDecoration(
+                color: AppColor.primaryColor,
+                borderRadius: const BorderRadius.only(
+                  topRight: Radius.circular(80),
+                  topLeft: Radius.circular(80),
+                  bottomLeft: Radius.circular(40),
+                  bottomRight: Radius.circular(40),
+                ),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  buildBottomBarItem(
-                    controller,
-                    icon: 'assets/icons/home.svg',
-                    activeIcon: 'assets/icons/home-active.svg',
-                    label: 'Home',
-                    index: 0,
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topRight: Radius.circular(80),
+                  topLeft: Radius.circular(80),
+                  bottomLeft: Radius.circular(40),
+                  bottomRight: Radius.circular(40),
+                ),
+                child: SafeArea(
+                  child: BottomAppBar(
+                    clipBehavior: Clip.antiAlias,
+                    height: 93 - MediaQuery.of(context).padding.bottom,
+                    elevation: 0,
+                    padding: const EdgeInsets.only(
+                      left: 32,
+                      right: 32,
+                      top: 18.5,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        buildBottomBarItem(
+                          controller,
+                          icon: 'assets/icons/home.svg',
+                          activeIcon: 'assets/icons/home-active.svg',
+                          label: 'Home',
+                          index: 0,
+                        ),
+                        buildBottomBarItem(
+                          controller,
+                          icon: 'assets/icons/search.svg',
+                          activeIcon: 'assets/icons/search-active.svg',
+                          label: 'Search',
+                          index: 1,
+                        ),
+                        buildBottomBarItem(
+                          controller,
+                          icon: 'assets/icons/books.svg',
+                          activeIcon: 'assets/icons/books-active.svg',
+                          label: 'Saved',
+                          index: 2,
+                        ),
+                        buildBottomBarItem(
+                          controller,
+                          icon: 'assets/icons/chat.svg',
+                          activeIcon: 'assets/icons/chat-active.svg',
+                          label: 'Chat',
+                          index: 3,
+                        ),
+                        buildBottomBarItem(
+                          controller,
+                          icon: 'assets/icons/profile.svg',
+                          activeIcon: 'assets/icons/profile-active.svg',
+                          label: 'Profile',
+                          index: 4,
+                        ),
+                      ],
+                    ),
                   ),
-                  buildBottomBarItem(
-                    controller,
-                    icon: 'assets/icons/search.svg',
-                    activeIcon: 'assets/icons/search-active.svg',
-                    label: 'Search',
-                    index: 1,
-                  ),
-                  buildBottomBarItem(
-                    controller,
-                    icon: 'assets/icons/books.svg',
-                    activeIcon: 'assets/icons/books-active.svg',
-                    label: 'Saved',
-                    index: 2,
-                  ),
-                  buildBottomBarItem(
-                    controller,
-                    icon: 'assets/icons/chat.svg',
-                    activeIcon: 'assets/icons/chat-active.svg',
-                    label: 'Chat',
-                    index: 3,
-                  ),
-                  buildBottomBarItem(
-                    controller,
-                    icon: 'assets/icons/profile.svg',
-                    activeIcon: 'assets/icons/profile-active.svg',
-                    label: 'Profile',
-                    index: 4,
-                  ),
-                ],
+                ),
               ),
-            ),
-          ),
+            );
+          },
         ),
       ),
       // logout,
-      body: PageView(
-        controller: controller.pageController,
-        children: controller.pages,
+      body: controller.obx(
+        (state) => SafeArea(
+          top: false,
+          child: PageView(
+            controller: controller.pageController,
+            physics: const NeverScrollableScrollPhysics(),
+            children: controller.pages,
+            onPageChanged: (index) {
+              controller.selectedIndex(index);
+            },
+          ),
+        ),
+        onLoading: Center(
+          child: AppWidget.getLoadingIndicator(
+            color: AppColor.primaryColor,
+          ),
+        ),
       ),
     );
   }

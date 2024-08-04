@@ -16,9 +16,11 @@ class UserResponse extends BaseResponse {
     return UserResponse(
       meta: json['meta'] != null ? Meta.fromJson(json['meta']) : null,
       data: json['data'],
-      token: json['data']['token'],
-      user: json['data']['user'] != null
-          ? User.fromJson(json['data']['user'])
+      token: json['data'] != null ? json['data']['token'] : null,
+      user: json['data'] != null
+          ? json['data']['user'] != null
+              ? User.fromJson(json['data']['user'])
+              : null
           : null,
     );
   }

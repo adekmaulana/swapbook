@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
@@ -25,7 +24,13 @@ class ChatScreen extends GetView<ChatController> {
         extendBody: true,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
-          systemOverlayStyle: SystemUiOverlayStyle.dark,
+          systemOverlayStyle: const SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.dark,
+            statusBarBrightness: Brightness.light,
+            systemNavigationBarColor: AppColor.backgroundColor,
+            systemNavigationBarIconBrightness: Brightness.dark,
+          ),
           toolbarHeight: 80,
           flexibleSpace: SafeArea(
             child: Container(
@@ -78,7 +83,6 @@ class ChatScreen extends GetView<ChatController> {
           enablePullDown: true,
           controller: controller.refreshController,
           onRefresh: controller.pagingController!.refresh,
-          primary: true,
           header: WaterDropMaterialHeader(
             backgroundColor: AppColor.primaryColor,
             color: Colors.white,
@@ -88,7 +92,7 @@ class ChatScreen extends GetView<ChatController> {
             init: controller,
             builder: (context) {
               return PagedListView.separated(
-                physics: const BouncingScrollPhysics(),
+                physics: const ClampingScrollPhysics(),
                 pagingController: controller.pagingController!,
                 separatorBuilder: (context, index) => const SizedBox(
                   height: 32,
@@ -110,30 +114,13 @@ class ChatScreen extends GetView<ChatController> {
                       (element) => element.userId != controller.self.value.id,
                     );
                     final user = participant.user;
-                    ImageProvider? avatar;
-                    if (user!.photoURL != null) {
-                      avatar = CachedNetworkImageProvider(user.photoURL!);
-                    } else {
-                      if (user.gender == "L") {
-                        avatar = const AssetImage(
-                          'assets/images/avatar-man.png',
-                        );
-                      } else if (user.gender == "P") {
-                        avatar = const AssetImage(
-                          'assets/images/avatar-woman.png',
-                        );
-                      } else {
-                        avatar = const AssetImage(
-                          'assets/images/avatar-man.png',
-                        );
-                      }
-                    }
                     return InkWell(
                       onTap: () {
                         Get.toNamed(
                           Routes.CHAT_ROOM,
                           arguments: {
                             'chat': chat,
+                            'user': user,
                           },
                         );
                       },
@@ -143,9 +130,9 @@ class ChatScreen extends GetView<ChatController> {
                           SizedBox(
                             height: 38,
                             width: 38,
-                            child: CircleAvatar(
-                              backgroundColor: const Color(0xFFFABCA6),
-                              backgroundImage: avatar,
+                            child: AppWidget.imageBuilder(
+                              imageURL: user!.photoURL,
+                              gender: user.gender,
                             ),
                           ),
                           const SizedBox(width: 12),

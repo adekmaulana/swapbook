@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import '../../../domain/case/auth/csrf_cookie.case.dart';
 import '../../../domain/case/auth/login.case.dart';
 import '../../../infrastructure/constant.dart';
+import '../../../infrastructure/navigation/routes.dart';
 import '../../../infrastructure/theme/app.widget.dart';
 import '../../controller.dart.dart';
 
@@ -73,6 +74,23 @@ class LoginController extends BaseController {
         passwordController.text,
       );
 
+      if (userResponse.meta?.code != 200) {
+        String message = 'An error occurred on our end while logging.';
+        if (userResponse.meta?.validations != null &&
+            userResponse.meta!.validations!.isNotEmpty) {
+          message = userResponse.meta?.validations?.first.message?.first ?? '';
+        } else if (userResponse.meta?.messages != null &&
+            userResponse.meta!.messages!.isNotEmpty) {
+          message = userResponse.meta?.messages?.first ?? '';
+        }
+
+        AppWidget.openSnackbar(
+          'Oops! Something went wrong.',
+          message,
+        );
+        return;
+      }
+
       await localRepository.put(
         LocalRepositoryKey.USER,
         jsonEncode(userResponse.user?.toJson() ?? {}),
@@ -86,7 +104,7 @@ class LoginController extends BaseController {
         true,
       );
 
-      Get.offAllNamed('/home');
+      Get.offAllNamed(Routes.HOME);
     } catch (e) {
       String message = 'An error occurred on our end while logging.';
       if (e is DioException) {
