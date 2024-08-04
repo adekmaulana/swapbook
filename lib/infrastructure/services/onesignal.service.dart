@@ -3,8 +3,6 @@ import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 class OneSignalService extends GetxService {
   static const String _oneSignalAppId = 'fa5fe931-e95d-432d-81c2-623f4cdc99fc';
-  static const String _oneSignalApiKey =
-      'OTI2MmIzMzItN2M2Ny00YzAyLWExOGYtODFkNWYxOTIwYTU1';
 
   String tagName = 'user_id';
   static void init() {

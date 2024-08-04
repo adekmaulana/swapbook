@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -164,6 +165,13 @@ class HomeController extends BaseController with StateMixin<LocationData> {
   void setupCallbackOneSignal() async {
     registerOneSignalEventListener(
       onOpened: (OSNotificationClickEvent event) async {
+        if (_notificationDebounce?.isActive ?? false) {
+          return;
+        }
+        _notificationDebounce = Timer(
+          1.seconds,
+          () => _notificationDebounce = null,
+        );
         try {
           final data = event.notification.additionalData;
           if (data != null) {
@@ -189,7 +197,7 @@ class HomeController extends BaseController with StateMixin<LocationData> {
             }
           }
         } catch (e) {
-          print(e);
+          log(e.toString(), name: 'SwapBook');
         }
       },
       onReceivedInForeground: (OSNotificationWillDisplayEvent event) {
@@ -204,6 +212,7 @@ class HomeController extends BaseController with StateMixin<LocationData> {
 
           chatController!.pagingController?.refresh();
         } catch (e) {
+          log(e.toString(), name: 'SwapBook');
           return event.preventDefault();
         }
       },
