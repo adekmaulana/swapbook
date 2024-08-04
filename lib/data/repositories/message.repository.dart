@@ -26,8 +26,9 @@ class MessageRepository implements IMessageRepository {
   Future<MessageResponse> sendMessage(
     int chatId,
     String content,
-    String? socketId,
-  ) async {
+    String? socketId, {
+    required String type,
+  }) async {
     try {
       final response = await _apiservice.post(
         AppUrl.message,
@@ -39,6 +40,7 @@ class MessageRepository implements IMessageRepository {
         data: {
           'chat_id': chatId,
           'content': content,
+          'type': type,
         },
       );
 

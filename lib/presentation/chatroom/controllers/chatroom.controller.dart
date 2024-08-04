@@ -9,9 +9,11 @@ import 'package:keyboard_detection/keyboard_detection.dart';
 import '../../../data/models/chat.model.dart';
 import '../../../data/models/message.model.dart';
 import '../../../data/models/user.model.dart';
-import '../../../data/repositories/chat.repository.dart';
 import '../../../data/repositories/local.repository.dart';
-import '../../../data/repositories/message.repository.dart';
+import '../../../domain/case/chat/get_chat.case.dart';
+import '../../../domain/case/message/get_messages.case.dart';
+import '../../../domain/case/message/read_messages.case.dart';
+import '../../../domain/case/message/send_message.case.dart';
 import '../../../infrastructure/constant.dart';
 import '../../../infrastructure/services/pusher.service.dart';
 import '../../../infrastructure/theme/app.widget.dart';
@@ -21,8 +23,6 @@ import '../../home/controllers/home.controller.dart';
 class ChatroomController extends GetxController with StateMixin {
   TextEditingController messageController = TextEditingController();
   LocalRepository localRepository = Get.find<LocalRepository>();
-  ChatRepository chatRepository = ChatRepository();
-  MessageRepository messageRepository = MessageRepository();
   PagingController<int, Message>? pagingController;
   ChatController chatController = Get.find<ChatController>();
   HomeController homeController = Get.find<HomeController>();
@@ -53,7 +53,7 @@ class ChatroomController extends GetxController with StateMixin {
     bool isFromNotification = args['is_from_notification'] ?? false;
     chat = args['chat'] as Chat;
     if (isFromNotification) {
-      final response = await chatRepository.getChat(chat.id!);
+      final response = await GetChatCase().call(chat.id!);
       if (response.meta!.code != 200) {
         pagingController?.error = response.meta!.messages!.first;
         return;
@@ -106,10 +106,10 @@ class ChatroomController extends GetxController with StateMixin {
 
   Future<void> _fetchMessages(int page, int limit) async {
     try {
-      final response = await messageRepository.getMessages(
-        chatId: chat.id!,
-        page: page,
-        limit: limit,
+      final response = await GetMessagesCase().call(
+        chat.id!,
+        page,
+        limit,
       );
 
       if (response.meta!.code != 200) {
@@ -143,7 +143,7 @@ class ChatroomController extends GetxController with StateMixin {
 
     sending(true);
     try {
-      final response = await messageRepository.sendMessage(
+      final response = await SendMessageCase().call(
         chat.id!,
         messageController.text,
         EchoService.instance.socketId,
@@ -251,7 +251,7 @@ class ChatroomController extends GetxController with StateMixin {
 
   Future<void> readMessages() async {
     try {
-      await messageRepository.readMessages(chat.id!);
+      await ReadMessagesCase().call(chat.id!);
       // Update last message in chat list
       chatController.pagingController?.refresh();
     } catch (e) {

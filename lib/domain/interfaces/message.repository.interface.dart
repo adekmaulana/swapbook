@@ -6,8 +6,9 @@ abstract class IMessageRepository {
   Future<MessageResponse> sendMessage(
     int chatId,
     String content,
-    String? socketId,
-  );
+    String? socketId, {
+    required String type,
+  });
   Future<MessageResponse> getMessage(int messageId);
   Future<MessagesResponse> getMessages({
     required int chatId,
