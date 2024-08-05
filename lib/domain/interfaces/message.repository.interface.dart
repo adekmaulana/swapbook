@@ -13,7 +13,7 @@ abstract class IMessageRepository {
   Future<MessagesResponse> getMessages({
     required int chatId,
     required int page,
-    int limit = 10,
+    int pageSize = 10,
   });
   Future<BaseResponse> readMessages(int chatId);
 }

@@ -15,7 +15,12 @@ import '../../../infrastructure/theme/app.widget.dart';
 
 class WelcomeController extends BaseController {
   final GoogleSignIn _googleSignIn = GoogleSignIn(
-    scopes: ['openid', 'email', 'profile'],
+    scopes: [
+      'openid',
+      'email',
+      'profile',
+      'https://www.googleapis.com/auth/books',
+    ],
   );
 
   Cookie? csrfCookie;

@@ -13,7 +13,7 @@ class GetMessagesCase {
       return await _messageRepository.getMessages(
         chatId: chatId,
         page: page,
-        limit: pageSize,
+        pageSize: pageSize,
       );
     } catch (e) {
       rethrow;

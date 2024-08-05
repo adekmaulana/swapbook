@@ -12,10 +12,16 @@ class ChatRepository implements IChatRepository {
   @override
   Future<ChatsResponse> getChats({
     required int page,
-    int limit = 10,
+    int pageSize = 10,
   }) async {
     try {
-      final response = await _apiService.get(AppUrl.chats);
+      final response = await _apiService.get(
+        AppUrl.chats,
+        data: {
+          'page': page,
+          'page_size': pageSize,
+        },
+      );
 
       return ChatsResponse.fromJson(response.data);
     } catch (e) {

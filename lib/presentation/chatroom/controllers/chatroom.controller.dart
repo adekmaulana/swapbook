@@ -104,12 +104,12 @@ class ChatroomController extends GetxController with StateMixin {
     }
   }
 
-  Future<void> _fetchMessages(int page, int limit) async {
+  Future<void> _fetchMessages(int page, int pageSize) async {
     try {
       final response = await GetMessagesCase().call(
         chat.id!,
         page,
-        limit,
+        pageSize,
       );
 
       if (response.meta!.code != 200) {
@@ -122,7 +122,7 @@ class ChatroomController extends GetxController with StateMixin {
         return;
       }
 
-      if (response.messages!.length < limit) {
+      if (response.messages!.length < pageSize) {
         pagingController?.appendLastPage(response.messages!);
         return;
       }

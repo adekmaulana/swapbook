@@ -54,7 +54,7 @@ class MessageRepository implements IMessageRepository {
   Future<MessagesResponse> getMessages({
     required int chatId,
     required int page,
-    int limit = 10,
+    int pageSize = 10,
   }) async {
     try {
       final response = await _apiservice.get(
@@ -62,7 +62,7 @@ class MessageRepository implements IMessageRepository {
         queryParameters: {
           'chat_id': chatId,
           'page': page,
-          'limit': limit,
+          'page_size': pageSize,
         },
       );
 

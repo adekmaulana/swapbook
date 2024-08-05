@@ -11,7 +11,7 @@ class GetChatsCase {
     try {
       return await _chatRepository.getChats(
         page: page,
-        limit: pageSize,
+        pageSize: pageSize,
       );
     } catch (e) {
       rethrow;

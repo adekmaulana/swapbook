@@ -51,11 +51,11 @@ class ChatController extends GetxController with StateMixin<List<Chat>> {
     super.onClose();
   }
 
-  Future<void> getChats(int page, int limit) async {
+  Future<void> getChats(int page, int pageSize) async {
     try {
       final response = await ChatRepository().getChats(
         page: page,
-        limit: limit,
+        pageSize: pageSize,
       );
 
       if (response.meta!.code != 200) {
@@ -68,7 +68,7 @@ class ChatController extends GetxController with StateMixin<List<Chat>> {
         return;
       }
 
-      if (response.chats!.length < limit) {
+      if (response.chats!.length < pageSize) {
         pagingController?.appendLastPage(response.chats!);
         return;
       }
