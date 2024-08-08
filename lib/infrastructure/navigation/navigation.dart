@@ -12,11 +12,12 @@ class Nav {
       bindings: [
         HomeControllerBinding(),
         KatalogControllerBinding(),
+        AllKatalogControllerBinding(),
+        NewKatalogControllerBinding(),
         SearchControllerBinding(),
         BookmarksControllerBinding(),
         ChatControllerBinding(),
         ProfileControllerBinding(),
-        ChatFindControllerBinding(),
       ],
     ),
     GetPage(
@@ -80,6 +81,11 @@ class Nav {
       name: Routes.POST,
       page: () => const PostScreen(),
       binding: PostControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.DETAIL_POST,
+      page: () => const DetailPostScreen(),
+      binding: DetailPostControllerBinding(),
     ),
   ];
 }

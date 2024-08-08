@@ -185,7 +185,7 @@ class EditProfileController extends BaseController {
       AppWidget.openSnackbar(
         'Success',
         'Profile updated successfully.',
-        type: 'success',
+        type: SnackBarStatus.success,
       );
     } catch (e) {
       AppWidget.openSnackbar(

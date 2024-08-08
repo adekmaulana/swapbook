@@ -8,6 +8,7 @@ class SendMessageCase {
     int chatId,
     String content,
     String? socketId, {
+    Map<String, dynamic>? data,
     String type = 'text',
   }) async {
     try {
@@ -15,6 +16,7 @@ class SendMessageCase {
         chatId,
         content,
         socketId,
+        data: data,
         type: type,
       );
     } catch (e) {

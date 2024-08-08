@@ -163,7 +163,6 @@ class EditProfileScreen extends GetView<EditProfileController> {
                             style: TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.w400,
-                              fontStyle: FontStyle.italic,
                               color: AppColor.borderColor,
                             ),
                           ),

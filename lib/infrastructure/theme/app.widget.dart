@@ -11,19 +11,25 @@ import 'package:permission_handler/permission_handler.dart';
 
 import 'app.color.dart';
 
+enum SnackBarStatus {
+  error,
+  success,
+  warning,
+}
+
 class AppWidget {
   AppWidget._();
 
-  static final Map<String, Color> _color = {
-    'error': AppColor.errorColor,
-    'success': AppColor.successColor,
-    'warning': AppColor.warningColor,
+  static final Map<SnackBarStatus, Color> _color = {
+    SnackBarStatus.error: AppColor.errorColor,
+    SnackBarStatus.success: AppColor.successColor,
+    SnackBarStatus.warning: AppColor.warningColor,
   };
 
-  static final Map<String, Color> _textColor = {
-    'error': AppColor.baseWhiteColor,
-    'success': AppColor.baseBlackColor,
-    'warning': AppColor.baseBlackColor,
+  static final Map<SnackBarStatus, Color> _textColor = {
+    SnackBarStatus.error: AppColor.baseWhiteColor,
+    SnackBarStatus.success: AppColor.baseBlackColor,
+    SnackBarStatus.warning: AppColor.baseBlackColor,
   };
 
   static final List<String> _defaultImage = [
@@ -34,7 +40,7 @@ class AppWidget {
   static SnackbarController openSnackbar(
     String title,
     String message, {
-    String type = 'error',
+    SnackBarStatus type = SnackBarStatus.error,
     VoidCallback? onPressed,
     Duration? duration,
   }) {
@@ -141,6 +147,7 @@ class AppWidget {
   static Future<T?> showBottomSheet<T>({
     String? routeName,
     dynamic arguments,
+    bool removeBackground = false,
     required Widget child,
   }) async {
     return Get.bottomSheet<T>(
@@ -155,25 +162,24 @@ class AppWidget {
           topRight: Radius.circular(50),
         ),
       ),
+      clipBehavior: Clip.antiAlias,
       Container(
         height: Get.height - Get.mediaQuery.viewPadding.top,
         decoration: BoxDecoration(
           color: AppColor.backgroundColor,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(50),
-            topRight: Radius.circular(50),
-          ),
-          image: DecorationImage(
-            image: Image.asset(
-              'assets/images/background-bottomsheet.png',
-              scale: 4,
-            ).image,
-            fit: BoxFit.cover,
-            colorFilter: ColorFilter.mode(
-              AppColor.backgroundColor.withOpacity(0.08),
-              BlendMode.hardLight,
-            ),
-          ),
+          image: !removeBackground
+              ? DecorationImage(
+                  image: Image.asset(
+                    'assets/images/background-bottomsheet.png',
+                    scale: 4,
+                  ).image,
+                  fit: BoxFit.cover,
+                  colorFilter: ColorFilter.mode(
+                    AppColor.backgroundColor.withOpacity(0.08),
+                    BlendMode.hardLight,
+                  ),
+                )
+              : null,
           boxShadow: const [
             BoxShadow(
               color: Color.fromRGBO(0, 0, 0, 0.25),

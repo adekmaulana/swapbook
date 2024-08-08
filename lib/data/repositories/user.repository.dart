@@ -5,10 +5,15 @@ import '../../domain/interfaces/user.repository.interface.dart';
 import '../../infrastructure/constant.dart';
 import '../../infrastructure/services/api.service.dart';
 import '../dto/base.response.dart';
+import '../dto/search_user.response.dart';
 import '../dto/user.response.dart';
 
 class UserRepository extends IUserRepository {
   final ApiService _apiservice = Get.find<ApiService>();
+
+  UserRepository() {
+    _apiservice.dio.options.baseUrl = AppUrl.baseUrl;
+  }
 
   @override
   Future<UserResponse> getMe(String id) async {
@@ -44,6 +49,22 @@ class UserRepository extends IUserRepository {
       );
 
       return BaseResponse.fromJson(response.data);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<SearchUserResponse> searchUser(String name) async {
+    try {
+      final response = await _apiservice.get(
+        AppUrl.users,
+        queryParameters: {
+          'name': name,
+        },
+      );
+
+      return SearchUserResponse.fromJson(response.data);
     } catch (e) {
       rethrow;
     }

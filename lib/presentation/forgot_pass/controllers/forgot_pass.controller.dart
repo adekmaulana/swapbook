@@ -40,7 +40,7 @@ class ForgotPassController extends BaseController {
       AppWidget.openSnackbar(
         'Success!',
         'Please check your email to reset your password.',
-        type: 'success',
+        type: SnackBarStatus.success,
       );
     } catch (e) {
       String message = 'An error occurred on our end while sending.';

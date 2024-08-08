@@ -30,9 +30,10 @@ class Routes {
   static const HOME = '/home';
   static const KATALOG = '/katalog';
   static const LOGIN = '/login';
+  static const POST = '/post';
   static const PROFILE = '/profile';
   static const REGISTER = '/register';
   static const SEARCH = '/search';
   static const WELCOME = '/welcome';
-  static const POST = '/post';
+  static const DETAIL_POST = '/detail-post';
 }

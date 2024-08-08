@@ -1,11 +1,11 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:swapbook/infrastructure/theme/app.widget.dart';
 
 import '../../../data/models/user.model.dart';
-import '../../../data/repositories/search.repository.dart';
 import '../../../domain/case/chat/create_chat.case.dart';
+import '../../../domain/case/user/search_user.case.dart';
 import '../../../infrastructure/navigation/routes.dart';
+import '../../../infrastructure/theme/app.widget.dart';
 import '../../home/controllers/home.controller.dart';
 import 'chat.controller.dart';
 
@@ -58,7 +58,7 @@ class ChatFindController extends GetxController with StateMixin<List<User>> {
   Future<void> searchUser() async {
     change(null, status: RxStatus.loading());
     try {
-      final response = await SearchRepository().searchUser(search.value);
+      final response = await SearchUserCase().call(search.value);
       if (response.meta!.code != 200) {
         change(
           null,

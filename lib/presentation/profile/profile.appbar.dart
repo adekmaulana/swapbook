@@ -55,7 +55,7 @@ class ProfileAppBar extends SliverPersistentHeaderDelegate {
       1.0,
     );
 
-    final relativeScroll = min(shrinkOffset, 380) / 380;
+    final relativeScroll = min(shrinkOffset, 400) / 400;
     final double fadeStart = max(0.0, 1.0 - kToolbarHeight / deltaExtent);
     const double fadeEnd = 1.0;
     return FlexibleSpaceBarSettings(
@@ -336,11 +336,10 @@ class ProfileAppBar extends SliverPersistentHeaderDelegate {
                   ),
                 ),
                 const SizedBox(height: 24),
-                // TODO: dynamic data
-                Container(
+                SizedBox(
                   height: 48,
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       FittedBox(
@@ -348,7 +347,7 @@ class ProfileAppBar extends SliverPersistentHeaderDelegate {
                         child: Column(
                           children: [
                             Text(
-                              '0',
+                              controller.state!['books'].length.toString(),
                               style: const TextStyle(
                                 color: AppColor.primaryBlackColor,
                                 fontSize: 18,
@@ -373,66 +372,66 @@ class ProfileAppBar extends SliverPersistentHeaderDelegate {
                           ],
                         ),
                       ),
-                      FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Column(
-                          children: [
-                            Text(
-                              '0',
-                              style: const TextStyle(
-                                color: AppColor.primaryBlackColor,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700,
-                              ),
-                              textScaler: TextScaler.linear(
-                                textScalerTween.transform(relativeScroll),
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Followers',
-                              style: const TextStyle(
-                                color: Color(0xFF3D405B),
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                              textScaler: TextScaler.linear(
-                                textScalerTween.transform(relativeScroll),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Column(
-                          children: [
-                            Text(
-                              '0',
-                              style: const TextStyle(
-                                color: AppColor.primaryBlackColor,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700,
-                              ),
-                              textScaler: TextScaler.linear(
-                                textScalerTween.transform(relativeScroll),
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Following',
-                              style: const TextStyle(
-                                color: Color(0xFF3D405B),
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                              textScaler: TextScaler.linear(
-                                textScalerTween.transform(relativeScroll),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      // FittedBox(
+                      //   fit: BoxFit.scaleDown,
+                      //   child: Column(
+                      //     children: [
+                      //       Text(
+                      //         '0',
+                      //         style: const TextStyle(
+                      //           color: AppColor.primaryBlackColor,
+                      //           fontSize: 18,
+                      //           fontWeight: FontWeight.w700,
+                      //         ),
+                      //         textScaler: TextScaler.linear(
+                      //           textScalerTween.transform(relativeScroll),
+                      //         ),
+                      //       ),
+                      //       const SizedBox(height: 4),
+                      //       Text(
+                      //         'Followers',
+                      //         style: const TextStyle(
+                      //           color: Color(0xFF3D405B),
+                      //           fontSize: 16,
+                      //           fontWeight: FontWeight.w600,
+                      //         ),
+                      //         textScaler: TextScaler.linear(
+                      //           textScalerTween.transform(relativeScroll),
+                      //         ),
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
+                      // FittedBox(
+                      //   fit: BoxFit.scaleDown,
+                      //   child: Column(
+                      //     children: [
+                      //       Text(
+                      //         '0',
+                      //         style: const TextStyle(
+                      //           color: AppColor.primaryBlackColor,
+                      //           fontSize: 18,
+                      //           fontWeight: FontWeight.w700,
+                      //         ),
+                      //         textScaler: TextScaler.linear(
+                      //           textScalerTween.transform(relativeScroll),
+                      //         ),
+                      //       ),
+                      //       const SizedBox(height: 4),
+                      //       Text(
+                      //         'Following',
+                      //         style: const TextStyle(
+                      //           color: Color(0xFF3D405B),
+                      //           fontSize: 16,
+                      //           fontWeight: FontWeight.w600,
+                      //         ),
+                      //         textScaler: TextScaler.linear(
+                      //           textScalerTween.transform(relativeScroll),
+                      //         ),
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),

@@ -220,189 +220,25 @@ class ChatroomScreen extends GetView<ChatroomController> {
                       noMoreItemsIndicatorBuilder: (context) =>
                           const SizedBox.shrink(),
                       itemBuilder: (context, message, index) {
+                        // bool isSameDate = true;
+                        // if (index == 0) {
+                        //   isSameDate = false;
+                        // } else {
+                        //   final previousMessage =
+                        //       controller.pagingController?.itemList![index - 1];
+                        //   isSameDate = previousMessage?.createdAt?.year ==
+                        //           message.createdAt?.year &&
+                        //       previousMessage?.createdAt?.month ==
+                        //           message.createdAt?.month &&
+                        //       previousMessage?.createdAt?.day ==
+                        //           message.createdAt?.day;
+                        // }
+
                         if (message.type == MessageType.REQUEST) {
-                          return Column(
-                            children: [
-                              Text(
-                                DateFormat.jm()
-                                    .format(message.createdAt!.toLocal())
-                                    .toLowerCase(),
-                                style: const TextStyle(
-                                  color: Color(0xFF979393),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                  fontFamily: 'SF Pro Display',
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                              RichText(
-                                textAlign: TextAlign.center,
-                                text: TextSpan(
-                                  text: message.userId ==
-                                          controller
-                                              .homeController.user.value.id
-                                      ? 'You'
-                                      : message.user!.name!.split(' ')[0],
-                                  style: const TextStyle(
-                                    color: Color(0xFF1A1F36),
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                  children: const [
-                                    TextSpan(
-                                      text: ' requested a book swap\n',
-                                      style: TextStyle(
-                                        color: Color(0xFF1A1F36),
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                    ),
-                                    // TODO: Replace with actual book title
-                                    //       and author name from request.
-                                    TextSpan(
-                                      text:
-                                          '“The Golem and the Jinni, Helene Wecker!”',
-                                      style: TextStyle(
-                                        color: Color(0xFF1A1F36),
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              if (message.userId !=
-                                  controller.homeController.user.value.id)
-                                const SizedBox(height: 16),
-                              if (message.userId !=
-                                  controller.homeController.user.value.id)
-                                // Button to accept or reject the request.
-                                SizedBox(
-                                  height: 40,
-                                  child: Wrap(
-                                    alignment: WrapAlignment.center,
-                                    runAlignment: WrapAlignment.center,
-                                    children: [
-                                      MaterialButton(
-                                        onPressed: null,
-                                        color: AppColor.secondaryColor,
-                                        elevation: 0,
-                                        highlightElevation: 2,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(24),
-                                        ),
-                                        disabledColor: const Color(0xFFFFC051),
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 26,
-                                          vertical: 11,
-                                        ),
-                                        child: const Text(
-                                          'Approve',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w700,
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 20),
-                                      MaterialButton(
-                                        onPressed: null,
-                                        color: AppColor.backgroundColor,
-                                        elevation: 0,
-                                        highlightElevation: 2,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(24),
-                                          side: const BorderSide(
-                                            color: Color(
-                                              0xFF808080,
-                                            ), // Enable Color(0xFF3D405B),
-                                            width: 0.5,
-                                          ),
-                                        ),
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 26,
-                                          vertical: 11,
-                                        ),
-                                        child: const Text(
-                                          'Decline',
-                                          style: TextStyle(
-                                            color: Color(
-                                              0xFF808080,
-                                            ), // Enable Color AppColor.primaryBlackColor,
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w700,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                            ],
-                          );
+                          return createMessageRequest(message);
                         }
 
-                        return Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: message.userId ==
-                                    controller.homeController.user.value.id
-                                ? CrossAxisAlignment.end
-                                : CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                constraints: BoxConstraints(
-                                  maxWidth: Get.width * 0.8,
-                                  minHeight: 53,
-                                ),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 14,
-                                  vertical: 17.5,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: message.userId ==
-                                          controller
-                                              .homeController.user.value.id
-                                      ? const Color(0xFFEBEBEB)
-                                      : AppColor.secondaryColor,
-                                  borderRadius: BorderRadius.circular(18),
-                                  shape: BoxShape.rectangle,
-                                ),
-                                child: Wrap(
-                                  runAlignment: WrapAlignment.center,
-                                  children: [
-                                    Text(
-                                      message.content!,
-                                      style: const TextStyle(
-                                        color: AppColor.primaryBlackColor,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                      textAlign: TextAlign.start,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              Text(
-                                DateFormat.jm()
-                                    .format(message.createdAt!.toLocal())
-                                    .toLowerCase(),
-                                style: const TextStyle(
-                                  color: Color(0xFF979393),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                  fontFamily: 'SF Pro Display',
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
+                        return createMessageText(message);
                       },
                       firstPageProgressIndicatorBuilder: (context) {
                         return AppWidget.getLoadingIndicator(
@@ -636,6 +472,282 @@ class ChatroomScreen extends GetView<ChatroomController> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget createMessageText(Message message) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 24,
+      ),
+      child: Column(
+        crossAxisAlignment:
+            message.userId == controller.homeController.user.value.id
+                ? CrossAxisAlignment.end
+                : CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Container(
+            constraints: BoxConstraints(
+              maxWidth: Get.width * 0.8,
+              minHeight: 53,
+            ),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 14,
+              vertical: 17.5,
+            ),
+            decoration: BoxDecoration(
+              color: message.userId == controller.homeController.user.value.id
+                  ? const Color(0xFFEBEBEB)
+                  : AppColor.secondaryColor,
+              borderRadius: BorderRadius.circular(18),
+              shape: BoxShape.rectangle,
+            ),
+            child: Wrap(
+              runAlignment: WrapAlignment.center,
+              children: [
+                Text(
+                  message.content!,
+                  style: const TextStyle(
+                    color: AppColor.primaryBlackColor,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  textAlign: TextAlign.start,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            DateFormat.jm().format(message.createdAt!.toLocal()).toLowerCase(),
+            style: const TextStyle(
+              color: Color(0xFF979393),
+              fontSize: 14,
+              fontWeight: FontWeight.w400,
+              fontFamily: 'SF Pro Display',
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget createMessageRequest(Message message) {
+    return Column(
+      children: [
+        Text(
+          DateFormat.jm().format(message.createdAt!.toLocal()).toLowerCase(),
+          style: const TextStyle(
+            color: Color(0xFF979393),
+            fontSize: 14,
+            fontWeight: FontWeight.w400,
+            fontFamily: 'SF Pro Display',
+          ),
+        ),
+        const SizedBox(height: 16),
+        if (message.request!.status == RequestStatus.pending)
+          RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              text: message.userId == controller.homeController.user.value.id
+                  ? 'You'
+                  : message.user!.name!.split(' ')[0],
+              style: const TextStyle(
+                color: Color(0xFF1A1F36),
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+              ),
+              children: [
+                const TextSpan(
+                  text: ' requested a book swap\n',
+                  style: TextStyle(
+                    color: Color(0xFF1A1F36),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+                TextSpan(
+                  text: message.request!.book!.title!,
+                  style: const TextStyle(
+                    color: Color(0xFF1A1F36),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        if (message.request!.status == RequestStatus.approved)
+          RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              text: message.userId == controller.homeController.user.value.id
+                  ? 'Your'
+                  : message.user!.name!.split(' ')[0],
+              style: const TextStyle(
+                color: Color(0xFF1A1F36),
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+              ),
+              children: [
+                TextSpan(
+                  text:
+                      message.userId == controller.homeController.user.value.id
+                          ? ' request to swap\n'
+                          : ' approved your request\n',
+                  style: const TextStyle(
+                    color: Color(0xFF1A1F36),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+                TextSpan(
+                  text: message.request!.book!.title!,
+                  style: const TextStyle(
+                    color: Color(0xFF1A1F36),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                if (message.userId == controller.homeController.user.value.id)
+                  const TextSpan(
+                    text: '\nhas been approved',
+                    style: TextStyle(
+                      color: Color(0xFF1A1F36),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        if (message.request!.status == RequestStatus.declined)
+          RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              text: message.userId == controller.homeController.user.value.id
+                  ? 'Your'
+                  : message.user!.name!.split(' ')[0],
+              style: const TextStyle(
+                color: Color(0xFF1A1F36),
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+              ),
+              children: [
+                TextSpan(
+                  text:
+                      message.userId == controller.homeController.user.value.id
+                          ? ' request to swap\n'
+                          : ' declined your request\n',
+                  style: const TextStyle(
+                    color: Color(0xFF1A1F36),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+                TextSpan(
+                  text: message.request!.book!.title!,
+                  style: const TextStyle(
+                    color: Color(0xFF1A1F36),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                if (message.userId == controller.homeController.user.value.id)
+                  const TextSpan(
+                    text: '\nhas been declined',
+                    style: TextStyle(
+                      color: Color(0xFF1A1F36),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        if (message.userId != controller.homeController.user.value.id &&
+            message.request!.status == RequestStatus.pending)
+          const SizedBox(height: 16),
+        if (message.userId != controller.homeController.user.value.id &&
+            message.request!.status == RequestStatus.pending)
+          // Button to accept or reject the request.
+          SizedBox(
+            height: 40,
+            child: Wrap(
+              alignment: WrapAlignment.center,
+              runAlignment: WrapAlignment.center,
+              children: [
+                MaterialButton(
+                  onPressed: message.request!.status == RequestStatus.pending
+                      ? () {
+                          controller.approveRequest(
+                            message.id!,
+                            message.request!.id!,
+                          );
+                        }
+                      : null,
+                  color: AppColor.secondaryColor,
+                  elevation: 0,
+                  highlightElevation: 2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  disabledColor: const Color(0xFFFFC051),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 26,
+                    vertical: 11,
+                  ),
+                  child: const Text(
+                    'Approve',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 20),
+                MaterialButton(
+                  onPressed: message.request!.status == RequestStatus.pending
+                      ? () {
+                          controller.rejectRequest(
+                            message.id!,
+                            message.request!.id!,
+                          );
+                        }
+                      : null,
+                  color: AppColor.backgroundColor,
+                  elevation: 0,
+                  highlightElevation: 2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(24),
+                    side: const BorderSide(
+                      color: Color(
+                        0xFF808080,
+                      ), // Enable Color(0xFF3D405B),
+                      width: 0.5,
+                    ),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 26,
+                    vertical: 11,
+                  ),
+                  child: const Text(
+                    'Decline',
+                    style: TextStyle(
+                      color: Color(
+                        0xFF808080,
+                      ), // Enable Color AppColor.primaryBlackColor,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+      ],
     );
   }
 }

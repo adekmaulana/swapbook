@@ -7,8 +7,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
 
+import '../../data/dto/google_book_search.response.dart';
 import '../../infrastructure/theme/app.color.dart';
 import '../../infrastructure/theme/app.widget.dart';
+import '../widgets/text_field_search.widget.dart';
 import 'controllers/post.controller.dart';
 
 class PostScreen extends GetView<PostController> {
@@ -43,29 +45,32 @@ class PostScreen extends GetView<PostController> {
                 ),
               ),
               centerTitle: false,
-              leading: IconButton(
-                icon: SvgPicture.asset(
-                  'assets/icons/back.svg',
-                  colorFilter: const ColorFilter.mode(
-                    AppColor.primaryBlackColor,
-                    BlendMode.srcIn,
-                  ),
-                ),
-                padding: const EdgeInsets.only(
-                  left: 25,
-                ),
-                constraints: const BoxConstraints(),
-                style: const ButtonStyle(
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
-                iconSize: 24,
-                onPressed: () {
-                  if (controller.isLoading) {
-                    return;
-                  }
+              leading: Row(
+                children: [
+                  const SizedBox(width: 24),
+                  IconButton(
+                    icon: SvgPicture.asset(
+                      'assets/icons/back.svg',
+                      colorFilter: const ColorFilter.mode(
+                        AppColor.primaryBlackColor,
+                        BlendMode.srcIn,
+                      ),
+                    ),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                    style: const ButtonStyle(
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    iconSize: 24,
+                    onPressed: () {
+                      if (controller.isLoading) {
+                        return;
+                      }
 
-                  Get.back();
-                },
+                      Get.back();
+                    },
+                  ),
+                ],
               ),
             ),
             body: SingleChildScrollView(
@@ -84,6 +89,9 @@ class PostScreen extends GetView<PostController> {
                       highlightColor: Colors.transparent,
                       onTap: () async {
                         await controller.pickImage();
+                      },
+                      onLongPress: () async {
+                        await controller.showImage();
                       },
                       child: DottedBorder(
                         color: const Color(0xFF3D405B),
@@ -106,10 +114,67 @@ class PostScreen extends GetView<PostController> {
                           () {
                             if (controller.selectedImage.value != null) {
                               return ClipRRect(
-                                borderRadius: BorderRadius.circular(25.54),
+                                borderRadius: BorderRadius.circular(
+                                  25.54 + 1.5,
+                                ),
                                 child: Image.file(
                                   File(controller.selectedImage.value!),
                                   fit: BoxFit.cover,
+                                ),
+                              );
+                            }
+
+                            if (controller.selectedBook.value != null) {
+                              return ClipRRect(
+                                borderRadius: BorderRadius.circular(
+                                  25.54 + 1.5,
+                                ),
+                                child: Image.network(
+                                  controller.selectedBook.value?.value
+                                          ?.volumeInfo?.imageLinks?.thumbnail ??
+                                      '',
+                                  fit: BoxFit.cover,
+                                  loadingBuilder: (context, o, event) {
+                                    if (event == null) {
+                                      return o;
+                                    }
+
+                                    return AppWidget.getLoadingIndicator(
+                                      color: AppColor.primaryColor,
+                                    );
+                                  },
+                                  errorBuilder: (context, o, error) {
+                                    if (controller.selectedImage.value !=
+                                        null) {
+                                      return Image.file(
+                                        File(controller.selectedImage.value!),
+                                        fit: BoxFit.fill,
+                                      );
+                                    }
+
+                                    return Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        SvgPicture.asset(
+                                          'assets/icons/image.svg',
+                                          width: 24,
+                                          height: 24,
+                                        ),
+                                        const SizedBox(height: 12.77),
+                                        const Text(
+                                          'Select image',
+                                          style: TextStyle(
+                                            color: Color(0xFF9E9E9E),
+                                            fontSize: 12.77,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  },
                                 ),
                               );
                             }
@@ -144,7 +209,7 @@ class PostScreen extends GetView<PostController> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        'Title',
+                        'Title Book',
                         style: TextStyle(
                           color: AppColor.primaryBlackColor,
                           fontSize: 14,
@@ -152,9 +217,42 @@ class PostScreen extends GetView<PostController> {
                         ),
                       ),
                       const SizedBox(height: 8.34),
-                      TextFormField(
+                      TextFieldSearch(
+                        itemsInView: 6,
+                        future: () {
+                          return controller.searchBooks();
+                        },
+                        getSelectedValue: (Items item) {
+                          controller.selectedBook.value = item;
+
+                          controller.titleController.text =
+                              item.value!.volumeInfo!.title!;
+                          controller.authorController.text =
+                              item.value!.volumeInfo!.authors!.join(', ');
+                          controller.genreController.text =
+                              item.value!.volumeInfo?.categories?.join(', ') ??
+                                  '';
+                          controller.synopsisController.text =
+                              item.value!.volumeInfo?.description ?? '';
+
+                          if (controller.synopsisController.text.isEmpty) {
+                            controller.errorSynopsis.value =
+                                'Please enter synopsis, some results does not provide synopsis.';
+                          } else {
+                            controller.errorSynopsis.value = null;
+                          }
+
+                          if (controller.genreController.text.isEmpty) {
+                            controller.errorGenre.value =
+                                'Please enter genre, some results does not provide.';
+                          } else {
+                            controller.errorGenre.value = null;
+                          }
+                        },
                         controller: controller.titleController,
-                        style: const TextStyle(
+                        label: 'Title Book',
+                        cursorColor: AppColor.primaryColor,
+                        textStyle: const TextStyle(
                           color: AppColor.primaryBlackColor,
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
@@ -180,7 +278,7 @@ class PostScreen extends GetView<PostController> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        'Author',
+                        'Author Book',
                         style: TextStyle(
                           color: AppColor.primaryBlackColor,
                           fontSize: 14,
@@ -195,6 +293,7 @@ class PostScreen extends GetView<PostController> {
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
                         ),
+                        readOnly: true,
                         decoration: const InputDecoration(
                           hintText: 'Enter author',
                           hintStyle: TextStyle(
@@ -224,25 +323,44 @@ class PostScreen extends GetView<PostController> {
                         ),
                       ),
                       const SizedBox(height: 8.34),
-                      TextFormField(
-                        controller: controller.genreController,
-                        style: const TextStyle(
-                          color: AppColor.primaryBlackColor,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        decoration: const InputDecoration(
-                          hintText: 'Enter genre',
-                          hintStyle: TextStyle(
-                            color: AppColor.borderColor,
-                            fontSize: 11,
+                      Obx(
+                        () => TextFormField(
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          readOnly: controller.selectedBook.value == null ||
+                              controller.selectedBook.value != null &&
+                                  controller.selectedBook.value!.value!
+                                          .volumeInfo?.categories !=
+                                      null,
+                          controller: controller.genreController,
+                          onChanged: (value) {
+                            if (value.isEmpty) {
+                              controller.errorGenre.value =
+                                  'Please enter genre';
+                            } else {
+                              controller.errorGenre.value = null;
+                            }
+                          },
+                          validator: (value) {
+                            return controller.errorGenre.value;
+                          },
+                          style: const TextStyle(
+                            color: AppColor.primaryBlackColor,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
                           ),
-                          contentPadding: EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 14.35,
+                          decoration: const InputDecoration(
+                            hintText: 'Enter genre',
+                            hintStyle: TextStyle(
+                              color: AppColor.borderColor,
+                              fontSize: 11,
+                            ),
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 14.35,
+                            ),
+                            filled: true,
+                            fillColor: AppColor.backgroundColor,
                           ),
-                          filled: true,
-                          fillColor: AppColor.backgroundColor,
                         ),
                       ),
                     ],
@@ -260,31 +378,51 @@ class PostScreen extends GetView<PostController> {
                         ),
                       ),
                       const SizedBox(height: 8.34),
-                      TextFormField(
-                        controller: controller.synopsisController,
-                        maxLines: null,
-                        minLines: 4,
-                        maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                        keyboardType: TextInputType.multiline,
-                        style: const TextStyle(
-                          color: AppColor.primaryBlackColor,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        textAlignVertical: TextAlignVertical.top,
-                        decoration: const InputDecoration(
-                          alignLabelWithHint: true,
-                          hintText: 'Enter synopsis',
-                          hintStyle: TextStyle(
-                            color: AppColor.borderColor,
-                            fontSize: 11,
+                      Obx(
+                        () => TextFormField(
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          controller: controller.synopsisController,
+                          maxLines: null,
+                          minLines: 4,
+                          maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                          keyboardType: TextInputType.multiline,
+                          style: const TextStyle(
+                            color: AppColor.primaryBlackColor,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
                           ),
-                          contentPadding: EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 14.35,
+                          onChanged: (value) {
+                            if (value.isEmpty) {
+                              controller.errorSynopsis.value =
+                                  'Please enter synopsis';
+                            } else {
+                              controller.errorSynopsis.value = null;
+                            }
+                          },
+                          validator: (value) {
+                            return controller.errorSynopsis.value;
+                          },
+                          readOnly: controller.selectedBook.value == null ||
+                              controller.selectedBook.value != null &&
+                                  controller.selectedBook.value?.value!
+                                          .volumeInfo?.description !=
+                                      null,
+                          textAlignVertical: TextAlignVertical.top,
+                          decoration: InputDecoration(
+                            errorText: controller.errorSynopsis.value,
+                            alignLabelWithHint: true,
+                            hintText: 'Enter synopsis',
+                            hintStyle: const TextStyle(
+                              color: AppColor.borderColor,
+                              fontSize: 11,
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 14.35,
+                            ),
+                            filled: true,
+                            fillColor: AppColor.backgroundColor,
                           ),
-                          filled: true,
-                          fillColor: AppColor.backgroundColor,
                         ),
                       ),
                     ],
@@ -329,12 +467,12 @@ class PostScreen extends GetView<PostController> {
                       const SizedBox(width: 16),
                       Expanded(
                         child: MaterialButton(
-                          onPressed: () {
+                          onPressed: () async {
                             if (controller.isLoading) {
                               return;
                             }
 
-                            // controller.post();
+                            await controller.post();
                           },
                           padding: const EdgeInsets.symmetric(
                             vertical: 8,

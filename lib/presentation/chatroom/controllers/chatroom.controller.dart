@@ -11,6 +11,7 @@ import '../../../data/models/message.model.dart';
 import '../../../data/models/user.model.dart';
 import '../../../data/repositories/local.repository.dart';
 import '../../../domain/case/chat/get_chat.case.dart';
+import '../../../domain/case/message/edit_message.case.dart';
 import '../../../domain/case/message/get_messages.case.dart';
 import '../../../domain/case/message/read_messages.case.dart';
 import '../../../domain/case/message/send_message.case.dart';
@@ -256,6 +257,52 @@ class ChatroomController extends GetxController with StateMixin {
       chatController.pagingController?.refresh();
     } catch (e) {
       rethrow;
+    }
+  }
+
+  Future<void> approveRequest(int messageId, int requestId) async {
+    try {
+      final response = await EditMessageCase().call(
+        messageId,
+        {
+          'status': 'approved',
+          'request_id': requestId,
+          'content': 'Request approved',
+        },
+      );
+
+      pagingController?.refresh();
+
+      homeController.user.value = response.message!.user!;
+      homeController.user.refresh();
+    } catch (e) {
+      AppWidget.openSnackbar(
+        'Oops! Something went wrong',
+        'Failed to send message. Please try again.',
+      );
+    }
+  }
+
+  Future<void> rejectRequest(int messageId, int requestId) async {
+    try {
+      final response = await EditMessageCase().call(
+        messageId,
+        {
+          'status': 'declined',
+          'request_id': requestId,
+          'content': 'Request declined',
+        },
+      );
+
+      pagingController?.refresh();
+
+      homeController.user.value = response.message!.user!;
+      homeController.user.refresh();
+    } catch (e) {
+      AppWidget.openSnackbar(
+        'Oops! Something went wrong',
+        'Failed to send message. Please try again.',
+      );
     }
   }
 }

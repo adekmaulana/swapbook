@@ -5,10 +5,11 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide FormData;
-import 'package:location/location.dart';
+import 'package:location/location.dart' hide Location;
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 import '../../../data/models/chat.model.dart';
+import '../../../data/models/location.model.dart';
 import '../../../data/models/user.model.dart';
 import '../../../domain/case/auth/logout.case.dart';
 import '../../../domain/case/auth/ping.case.dart';
@@ -100,7 +101,7 @@ class HomeController extends BaseController with StateMixin<LocationData> {
     );
 
     change(location, status: RxStatus.success());
-    user.value.location = location;
+    user.value.location = Location.fromLocationData(location);
     user.refresh();
 
     chatController = Get.find<ChatController>();

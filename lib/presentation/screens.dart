@@ -2,6 +2,7 @@ export 'package:swapbook/presentation/bookmarks/bookmarks.screen.dart';
 export 'package:swapbook/presentation/chat/chat.screen.dart';
 export 'package:swapbook/presentation/chat/chat_find.screen.dart';
 export 'package:swapbook/presentation/chatroom/chatroom.screen.dart';
+export 'package:swapbook/presentation/detail_post/detail_post.screen.dart';
 export 'package:swapbook/presentation/edit_profile/edit_profile.screen.dart';
 export 'package:swapbook/presentation/forgot_pass/forgot_pass.screen.dart';
 export 'package:swapbook/presentation/home/home.screen.dart';

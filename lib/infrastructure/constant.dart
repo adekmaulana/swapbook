@@ -53,4 +53,8 @@ class AppUrl {
   // Messages
   static const String messages = '/messages';
   static const String message = '/message';
+
+  // Post/Book
+  static const String post = '/post';
+  static const String posts = '/posts';
 }

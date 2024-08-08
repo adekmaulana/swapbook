@@ -17,7 +17,7 @@ class AuthInterceptor extends InterceptorsWrapper {
       '',
     );
 
-    if (token.isNotEmpty) {
+    if (token.isNotEmpty && options.baseUrl == AppUrl.baseUrl) {
       options.headers['Authorization'] = 'Bearer $token';
     }
     return handler.next(options);

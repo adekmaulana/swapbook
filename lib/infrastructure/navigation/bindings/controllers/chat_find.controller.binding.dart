@@ -7,7 +7,6 @@ class ChatFindControllerBinding extends Bindings {
   void dependencies() {
     Get.lazyPut<ChatFindController>(
       () => ChatFindController(),
-      fenix: true,
     );
   }
 }

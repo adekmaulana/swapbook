@@ -32,6 +32,8 @@ class ApiService extends GetxService {
     },
   );
 
+  Dio get dio => _dio;
+
   // dio instance
   final Dio _dio = Dio(_options)
     ..interceptors.addAll(

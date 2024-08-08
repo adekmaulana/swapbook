@@ -43,11 +43,10 @@ class Meta {
           : null,
       validations: json['validations'] != null && json['validations'].isNotEmpty
           ? json['validations']
-              .entries
               .map<Validations>(
-                (entry) => Validations(
-                  field: entry.key,
-                  message: entry.value.cast<String>(),
+                (value) => Validations(
+                  field: json['validations'].indexOf(value).toString(),
+                  message: [value].cast<String>(),
                 ),
               )
               .toList()

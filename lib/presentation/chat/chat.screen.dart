@@ -88,151 +88,154 @@ class ChatScreen extends GetView<ChatController> {
             color: Colors.white,
             distance: 20.0,
           ),
-          child: GetBuilder<ChatController>(
-            init: controller,
-            builder: (context) {
-              return PagedListView.separated(
-                physics: const ClampingScrollPhysics(),
-                pagingController: controller.pagingController!,
-                separatorBuilder: (context, index) => const SizedBox(
-                  height: 32,
+          child: PagedListView.separated(
+            physics: const ClampingScrollPhysics(),
+            pagingController: controller.pagingController!,
+            separatorBuilder: (context, index) => const SizedBox(
+              height: 32,
+            ),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 24,
+              vertical: 36,
+            ),
+            builderDelegate: PagedChildBuilderDelegate<Chat>(
+              firstPageProgressIndicatorBuilder: (context) => SafeArea(
+                child: AppWidget.getLoadingIndicator(
+                  color: AppColor.primaryColor,
                 ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 36,
-                ),
-                builderDelegate: PagedChildBuilderDelegate<Chat>(
-                  firstPageProgressIndicatorBuilder: (context) =>
-                      AppWidget.getLoadingIndicator(
-                    color: AppColor.primaryColor,
+              ),
+              noItemsFoundIndicatorBuilder: (context) => const SafeArea(
+                child: Center(
+                  child: Text(
+                    'Connect with fellow book lovers. Share reads, discuss favorites, and exchange recommendations. Start chatting now!',
+                    style: TextStyle(
+                      color: Color(0xFF667085),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  newPageProgressIndicatorBuilder: (context) =>
-                      const SizedBox.shrink(),
-                  itemBuilder: (context, item, index) {
-                    final chat = item;
-                    final participant = chat.participants!.firstWhere(
-                      (element) => element.userId != controller.self.value.id,
-                    );
-                    final user = participant.user;
-                    return InkWell(
-                      onTap: () {
-                        Get.toNamed(
-                          Routes.CHAT_ROOM,
-                          arguments: {
-                            'chat': chat,
-                            'user': user,
-                          },
-                        );
+                ),
+              ),
+              itemBuilder: (context, item, index) {
+                final chat = item;
+                final participant = chat.participants!.firstWhere(
+                  (element) => element.userId != controller.self.value.id,
+                );
+                final user = participant.user;
+                return InkWell(
+                  onTap: () {
+                    Get.toNamed(
+                      Routes.CHAT_ROOM,
+                      arguments: {
+                        'chat': chat,
+                        'user': user,
                       },
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: 38,
-                            width: 38,
-                            child: AppWidget.imageBuilder(
-                              imageURL: user!.photoURL,
-                              gender: user.gender,
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Container(
-                              height: 54,
-                              decoration: const BoxDecoration(
-                                border: Border(
-                                  bottom: BorderSide(
-                                    color: Color(0x66808080),
-                                    width: 1,
-                                  ),
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Flexible(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          participant.user!.name!,
-                                          style: const TextStyle(
-                                            fontSize: 17,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          chat.lastMessage!.content!,
-                                          style: const TextStyle(
-                                            fontSize: 12,
-                                            color: Color(0xFF9B9B9B),
-                                            fontWeight: FontWeight.w700,
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        DateFormat.Hm().format(
-                                          chat.lastMessage!.updatedAt!
-                                              .toLocal(),
-                                        ),
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: AppColor.secondaryColor,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                      if (chat.unreadCount != null &&
-                                          chat.unreadCount! > 0)
-                                        const SizedBox(height: 4),
-                                      if (chat.unreadCount != null &&
-                                          chat.unreadCount! > 0)
-                                        Flexible(
-                                          child: Container(
-                                            height: 18,
-                                            width: 18,
-                                            alignment: Alignment.center,
-                                            decoration: BoxDecoration(
-                                              color: AppColor.secondaryColor,
-                                              shape: BoxShape.circle,
-                                            ),
-                                            child: FittedBox(
-                                              fit: BoxFit.scaleDown,
-                                              child: Text(
-                                                chat.unreadCount.toString(),
-                                                style: const TextStyle(
-                                                  fontSize: 12,
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.w700,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
                     );
                   },
-                ),
-              );
-            },
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: 38,
+                        width: 38,
+                        child: AppWidget.imageBuilder(
+                          imageURL: user!.photoURL,
+                          gender: user.gender,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Container(
+                          height: 54,
+                          decoration: const BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(
+                                color: Color(0x66808080),
+                                width: 1,
+                              ),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Flexible(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      participant.user!.name!,
+                                      style: const TextStyle(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      chat.lastMessage!.content!,
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        color: Color(0xFF9B9B9B),
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    DateFormat.Hm().format(
+                                      chat.lastMessage!.updatedAt!.toLocal(),
+                                    ),
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: AppColor.secondaryColor,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                  if (chat.unreadCount != null &&
+                                      chat.unreadCount! > 0)
+                                    const SizedBox(height: 4),
+                                  if (chat.unreadCount != null &&
+                                      chat.unreadCount! > 0)
+                                    Flexible(
+                                      child: Container(
+                                        height: 18,
+                                        width: 18,
+                                        alignment: Alignment.center,
+                                        decoration: BoxDecoration(
+                                          color: AppColor.secondaryColor,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: FittedBox(
+                                          fit: BoxFit.scaleDown,
+                                          child: Text(
+                                            chat.unreadCount.toString(),
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
           ),
         ),
       ),

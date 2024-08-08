@@ -32,6 +32,7 @@ dependencies:
   intl: ^0.19.0
   keyboard_detection: ^0.7.2
   laravel_echo_null: ^0.0.6+1
+  like_button: ^2.0.5
   location: ^7.0.0
   onesignal_flutter: ^5.2.2
   path: ^1.9.0
@@ -41,6 +42,8 @@ dependencies:
   pusher_channels_flutter: ^2.2.1
   readmore: ^3.0.0
   shared_preferences: ^2.3.1
+  sliver_tools: ^0.2.12
+  textfield_search: ^0.11.1
   url_launcher: ^6.3.0
 
   flutter:

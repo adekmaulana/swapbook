@@ -12,6 +12,10 @@ import '../dto/user.response.dart';
 class AuthRepository implements IAuthRepository {
   final ApiService _apiService = Get.find<ApiService>();
 
+  AuthRepository() {
+    _apiService.dio.options.baseUrl = AppUrl.baseUrl;
+  }
+
   @override
   Future<Response<dynamic>> csrfCookie() async {
     try {

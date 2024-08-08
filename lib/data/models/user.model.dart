@@ -1,4 +1,4 @@
-import 'package:location/location.dart';
+import 'location.model.dart';
 
 class User {
   int? id;
@@ -15,7 +15,7 @@ class User {
   DateTime? createdAt;
   DateTime? updatedAt;
   bool? isAdmin;
-  LocationData? location;
+  Location? location;
 
   User({
     this.id,
@@ -47,6 +47,9 @@ class User {
       instagram: json['instagram'],
       twitter: json['twitter'],
       isAdmin: json['is_admin'],
+      location: json['location'] != null && json['location'].isNotEmpty
+          ? Location.fromJson(json['location'])
+          : null,
       emailVerifiedAt: DateTime.tryParse(json['email_verified_at'] ?? ''),
       lastActive: json['last_active'] is Map
           ? DateTime.tryParse(json['last_active']['date'] ?? '')
@@ -68,11 +71,11 @@ class User {
       'instagram': instagram,
       'twitter': twitter,
       'is_admin': isAdmin,
+      'location': location?.toJson(),
       'email_verified_at': emailVerifiedAt?.toIso8601String(),
       'last_active': lastActive?.toIso8601String(),
       'created_at': createdAt?.toIso8601String(),
       'updated_at': updatedAt?.toIso8601String(),
-      'location': location?.toString(),
     };
   }
 }

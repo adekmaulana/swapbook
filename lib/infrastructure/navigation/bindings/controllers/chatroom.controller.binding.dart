@@ -7,7 +7,6 @@ class ChatroomControllerBinding extends Bindings {
   void dependencies() {
     Get.lazyPut<ChatroomController>(
       () => ChatroomController(),
-      fenix: true,
     );
   }
 }

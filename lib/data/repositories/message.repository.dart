@@ -4,12 +4,39 @@ import 'package:get/get.dart';
 import '../../domain/interfaces/message.repository.interface.dart';
 import '../../infrastructure/constant.dart';
 import '../../infrastructure/services/api.service.dart';
+import '../../infrastructure/services/pusher.service.dart';
 import '../dto/base.response.dart';
 import '../dto/message.response.dart';
 import '../dto/messages.response.dart';
 
 class MessageRepository implements IMessageRepository {
   final ApiService _apiservice = Get.find<ApiService>();
+
+  MessageRepository() {
+    _apiservice.dio.options.baseUrl = AppUrl.baseUrl;
+  }
+
+  @override
+  Future<MessageResponse> editMessage(
+    int messageId,
+    Map<String, dynamic> data,
+  ) async {
+    try {
+      final response = await _apiservice.post(
+        '${AppUrl.message}/$messageId',
+        options: Options(
+          headers: {
+            'X-Socket-ID': EchoService.instance.socketId,
+          },
+        ),
+        data: data,
+      );
+
+      return MessageResponse.fromJson(response.data);
+    } catch (e) {
+      rethrow;
+    }
+  }
 
   @override
   Future<MessageResponse> getMessage(int messageId) async {
@@ -27,6 +54,7 @@ class MessageRepository implements IMessageRepository {
     int chatId,
     String content,
     String? socketId, {
+    Map<String, dynamic>? data,
     required String type,
   }) async {
     try {
@@ -41,6 +69,7 @@ class MessageRepository implements IMessageRepository {
           'chat_id': chatId,
           'content': content,
           'type': type,
+          if (data != null) ...data,
         },
       );
 

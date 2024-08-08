@@ -1,3 +1,4 @@
+import 'book.model.dart';
 import 'chat.model.dart';
 import 'user.model.dart';
 
@@ -11,6 +12,7 @@ class Message {
   User? user;
   Chat? chat;
   String? type;
+  Request? request;
 
   Message({
     this.id,
@@ -22,6 +24,7 @@ class Message {
     this.user,
     this.chat,
     this.type,
+    this.request,
   });
 
   factory Message.fromJson(Map<String, dynamic> json) {
@@ -35,6 +38,8 @@ class Message {
       user: json['user'] != null ? User.fromJson(json['user']) : null,
       chat: json['chat'] != null ? Chat.fromJson(json['chat']) : null,
       type: json['type'],
+      request:
+          json['request'] != null ? Request.fromJson(json['request']) : null,
     );
   }
 
@@ -49,6 +54,62 @@ class Message {
       'user': user?.toJson(),
       'chat': chat?.toJson(),
       'type': type,
+      'request': request?.toJson(),
     };
   }
+}
+
+class Request {
+  int? id;
+  int? requestBy;
+  int? bookId;
+  int? messageId;
+  RequestStatus? status;
+  DateTime? createdAt;
+  DateTime? updatedAt;
+  Book? book;
+
+  Request({
+    this.id,
+    this.requestBy,
+    this.bookId,
+    this.messageId,
+    this.status,
+    this.createdAt,
+    this.updatedAt,
+    this.book,
+  });
+
+  factory Request.fromJson(Map<String, dynamic> json) {
+    return Request(
+      id: json['id'],
+      requestBy: json['request_by'],
+      bookId: json['book_id'],
+      messageId: json['message_id'],
+      status: RequestStatus.values[json['status']],
+      createdAt: DateTime.tryParse(json['created_at'] ?? ''),
+      updatedAt: DateTime.tryParse(json['updated_at'] ?? ''),
+      book: json['post'] != null ? Book.fromJson(json['post']) : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'request_by': requestBy,
+      'book_id': bookId,
+      'message_id': messageId,
+      'status': status?.index,
+      'created_at': createdAt?.toIso8601String(),
+      'updated_at': updatedAt?.toIso8601String(),
+      'post': book?.toJson(),
+    };
+  }
+}
+
+enum RequestStatus {
+  pending,
+  approved,
+  declined,
+  finished,
 }

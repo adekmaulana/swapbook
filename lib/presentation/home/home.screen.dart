@@ -68,9 +68,8 @@ class HomeScreen extends GetView<HomeController> {
                             fit: BoxFit.scaleDown,
                             child: Obx(
                               () => Text(
-                                controller.user.value.isAdmin == true
-                                    ? 'Admin'
-                                    : 'User',
+                                controller.user.value.username ??
+                                    controller.user.value.email!,
                                 style: const TextStyle(
                                   color: AppColor.borderColor,
                                   fontSize: 14,
@@ -178,9 +177,9 @@ class HomeScreen extends GetView<HomeController> {
             }
 
             return Container(
-              decoration: BoxDecoration(
-                color: AppColor.primaryColor,
-                borderRadius: const BorderRadius.only(
+              decoration: const BoxDecoration(
+                color: Colors.transparent,
+                borderRadius: BorderRadius.only(
                   topRight: Radius.circular(80),
                   topLeft: Radius.circular(80),
                   bottomLeft: Radius.circular(40),
@@ -194,56 +193,53 @@ class HomeScreen extends GetView<HomeController> {
                   bottomLeft: Radius.circular(40),
                   bottomRight: Radius.circular(40),
                 ),
-                child: SafeArea(
-                  child: BottomAppBar(
-                    clipBehavior: Clip.antiAlias,
-                    height: 93 - MediaQuery.of(context).padding.bottom,
-                    elevation: 0,
-                    padding: const EdgeInsets.only(
-                      left: 32,
-                      right: 32,
-                      top: 18.5,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        buildBottomBarItem(
-                          controller,
-                          icon: 'assets/icons/home.svg',
-                          activeIcon: 'assets/icons/home-active.svg',
-                          label: 'Home',
-                          index: 0,
-                        ),
-                        buildBottomBarItem(
-                          controller,
-                          icon: 'assets/icons/search.svg',
-                          activeIcon: 'assets/icons/search-active.svg',
-                          label: 'Search',
-                          index: 1,
-                        ),
-                        buildBottomBarItem(
-                          controller,
-                          icon: 'assets/icons/books.svg',
-                          activeIcon: 'assets/icons/books-active.svg',
-                          label: 'Saved',
-                          index: 2,
-                        ),
-                        buildBottomBarItem(
-                          controller,
-                          icon: 'assets/icons/chat.svg',
-                          activeIcon: 'assets/icons/chat-active.svg',
-                          label: 'Chat',
-                          index: 3,
-                        ),
-                        buildBottomBarItem(
-                          controller,
-                          icon: 'assets/icons/profile.svg',
-                          activeIcon: 'assets/icons/profile-active.svg',
-                          label: 'Profile',
-                          index: 4,
-                        ),
-                      ],
-                    ),
+                child: BottomAppBar(
+                  height: 93 - MediaQuery.of(context).padding.bottom,
+                  elevation: 0,
+                  padding: const EdgeInsets.only(
+                    left: 32,
+                    right: 32,
+                    top: 18.5,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      buildBottomBarItem(
+                        controller,
+                        icon: 'assets/icons/home.svg',
+                        activeIcon: 'assets/icons/home-active.svg',
+                        label: 'Home',
+                        index: 0,
+                      ),
+                      buildBottomBarItem(
+                        controller,
+                        icon: 'assets/icons/search.svg',
+                        activeIcon: 'assets/icons/search-active.svg',
+                        label: 'Search',
+                        index: 1,
+                      ),
+                      buildBottomBarItem(
+                        controller,
+                        icon: 'assets/icons/books.svg',
+                        activeIcon: 'assets/icons/books-active.svg',
+                        label: 'Saved',
+                        index: 2,
+                      ),
+                      buildBottomBarItem(
+                        controller,
+                        icon: 'assets/icons/chat.svg',
+                        activeIcon: 'assets/icons/chat-active.svg',
+                        label: 'Chat',
+                        index: 3,
+                      ),
+                      buildBottomBarItem(
+                        controller,
+                        icon: 'assets/icons/profile.svg',
+                        activeIcon: 'assets/icons/profile-active.svg',
+                        label: 'Profile',
+                        index: 4,
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -253,16 +249,13 @@ class HomeScreen extends GetView<HomeController> {
       ),
       // logout,
       body: controller.obx(
-        (state) => SafeArea(
-          top: false,
-          child: PageView(
-            controller: controller.pageController,
-            physics: const NeverScrollableScrollPhysics(),
-            children: controller.pages,
-            onPageChanged: (index) {
-              controller.selectedIndex(index);
-            },
-          ),
+        (state) => PageView(
+          controller: controller.pageController,
+          physics: const NeverScrollableScrollPhysics(),
+          children: controller.pages,
+          onPageChanged: (index) {
+            controller.selectedIndex(index);
+          },
         ),
         onLoading: Center(
           child: AppWidget.getLoadingIndicator(

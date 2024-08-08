@@ -59,7 +59,7 @@ class RegisterController extends BaseController {
       AppWidget.openSnackbar(
         'Success',
         'User registered successfully. Please login to continue.',
-        type: 'success',
+        type: SnackBarStatus.success,
       );
     } catch (e) {
       String message = 'An error occurred on our end while registering user.';

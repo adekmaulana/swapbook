@@ -9,6 +9,10 @@ import '../dto/chats.response.dart';
 class ChatRepository implements IChatRepository {
   final ApiService _apiService = Get.find<ApiService>();
 
+  ChatRepository() {
+    _apiService.dio.options.baseUrl = AppUrl.baseUrl;
+  }
+
   @override
   Future<ChatsResponse> getChats({
     required int page,

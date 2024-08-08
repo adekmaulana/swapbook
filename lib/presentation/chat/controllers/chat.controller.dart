@@ -11,6 +11,7 @@ import '../../../infrastructure/navigation/routes.dart';
 import '../../../infrastructure/theme/app.widget.dart';
 import '../../home/controllers/home.controller.dart';
 import '../chat_find.screen.dart';
+import 'chat_find.controller.dart';
 
 class ChatController extends GetxController with StateMixin<List<Chat>> {
   LocalRepository localRepository = Get.find<LocalRepository>();
@@ -89,6 +90,10 @@ class ChatController extends GetxController with StateMixin<List<Chat>> {
   }
 
   void searchUser() {
+    Get.lazyPut<ChatFindController>(
+      () => ChatFindController(),
+    );
+
     AppWidget.showBottomSheet(
       routeName: Routes.CHAT_FIND,
       child: const ChatFindScreen(),
